@@ -12,9 +12,6 @@ def ping(host):
         
     output = ''.join(output)
 
-    print output.split('/')
-    print len(output)
-    
     if ok not in output:
         print 'ICMP test failed for %s\n' %host,
     else:
