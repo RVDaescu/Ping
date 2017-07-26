@@ -5,8 +5,8 @@ def ping(host):
     output = []
     while 1:
         line = child.readline()
-	output.append(line)
-	if not line: break
+		output.append(line)
+		if not line: break
 
     ok = ', 0% packet loss'
         
@@ -19,5 +19,3 @@ def ping(host):
         print 'ICMP test failed for %s\n' %host,
     else:
         print 'Host %s has no packet loss\n' %host,
-
-ping('8.8.8.8')
