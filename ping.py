@@ -2,7 +2,7 @@ from re import *
 import pexpect
 
 def ping(host, count = 10):
-    child = pexpect.spawn('ping -c %d %s' %(count, host))
+    child = pexpect.spawn('ping -i 1 -c %d %s' %(count, host))
     output = []
     while 1:
         line = child.readline()
@@ -11,9 +11,9 @@ def ping(host, count = 10):
         
     output = ''.join(output)
 
-    search =  output.split(',')
+    src =  output.split(',')
 
-    for j in search:
+    for j in src:
         if 'packet loss' in j:
             pl = j.split(' ')
             pl = pl[1]
