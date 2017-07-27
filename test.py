@@ -1,23 +1,21 @@
 from ping import ping
 import threading
 
-ip = open('ip3.txt', 'r')
+def test(list):
 
-ip_list = []
+    ip = open(list, 'r')
 
-ip_list.append(ip.readlines())
-ip_list = ip_list[0]
+    ip_list =ip.readlines()
 
-#for i in range(len(ip_list)):
-#    print ip_list[i].replace('\r\n','')
+    threads = []
 
-threads = []
+    for i in range(len(ip_list)):
+        t = threading.Thread(target = ping, args = (ip_list[i].replace('\n',''),))
+        threads.append(t)
+        t.start()
 
-for i in range(len(ip_list)):
-    t = threading.Thread(target = ping, args = (ip_list[i].replace('\r\n',''),))
-    threads.append(t)
-    t.start()
+    for t in threads:
+        t.join()
 
-for t in threads:
-    t.join()
 
+test('ip3.txt')
