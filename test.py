@@ -10,12 +10,9 @@ def test(list):
     threads = []
 
     for i in range(len(ip_list)):
-        t = threading.Thread(target = ping, args = (ip_list[i].replace('\n',''),))
+        t = threading.Thread(target = ping, args = (ip_list[i].replace('\n',''), ), kwargs = {'mode': 'qos'})
         threads.append(t)
         t.start()
 
     for t in threads:
         t.join()
-
-
-test('ip3.txt')
