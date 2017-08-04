@@ -1,10 +1,12 @@
 import smtplib
 
-server = smtplib.SMTP('mail.vhsmail.vodafone.com', 25)
+def send_mail(to_addr = 'rvdaescu@gmail.com', msg = None)
 
-server.login('office@daescu.ro', 'Sugipula1@')
+    server = smtplib.SMTP('mail.vhsmail.vodafone.com', 25)
 
-msg = 'this is a test email\n Yes'
+    server.login('office@daescu.ro', 'Sugipula1@')
 
-server.sendmail('office@daescu.ro', 'rvdaescu@gmail.com', msg)
+    msg = msg
+
+    server.sendmail('office@daescu.ro', to_addr , msg)
 
