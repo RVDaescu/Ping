@@ -1,6 +1,5 @@
 import threading, string
 from threading import Thread
-print threading.__file__
 from scapy.all import sniff, sendp, IP, ICMP, send
 from random import choice
 
@@ -58,8 +57,6 @@ class snd(Thread):
         """
         
         packet = (IP(dst = self.host)/ICMP()/self.size)
-        print self.host
-
         send(packet, iface = self.iface, count = self.count, inter = self.inter)
 
 def main(list):
@@ -70,8 +67,6 @@ def main(list):
 
     for i in range(len(open(list, 'r').readlines())):
             ip_list.append(ip.readline().replace('\n', ''))
-
-    print ip_list
  
     for i in range(len(ip_list)):
         pkt_list = []
@@ -83,15 +78,14 @@ def main(list):
         send_pk = snd(host = ip_list[i], size = 320)
         send_pk.start()
 
-#       sniff_get.join()
-#       send_pk.join()
+        sniff_get.join()
+        send_pk.join()
+    
+    print pkt_list        
+    return pkt_list
 
-        print pkt_list
-
-        fil = open('sniff/sniff_%s.txt' %ip_list[i].replace('.','_'), 'w+')
-        for i in range(len(pkt_list)):
-            fil.write(str([pkt_list[i]]),'\n')
-        fil.close()
-     
 if __name__ in '__main__':
-    main('ip.txt')
+    if len(main('ip.txt')) != 10:
+        print "Fail!"
+    else:
+        print 'Test passed'
