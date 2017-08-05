@@ -13,3 +13,4 @@ def send_mail(to_addr = 'rvdaescu@gmail.com', msg = None):
 
     server.sendmail('office@daescu.ro', to_addr , msg)
 
+    server.quit()
