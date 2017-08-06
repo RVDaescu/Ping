@@ -10,7 +10,7 @@ def raw(int):
 
 class snf(Thread):
 
-    def __init__(self,output = [], filter = 'icmp', iface = 'enp2s0', count = -1, timeout = 10):
+    def __init__(self,output = [], filter = 'icmp', iface = 'wlo1', count = -1, timeout = 10):
         #Constructor
         
         Thread.__init__(self)
@@ -84,10 +84,9 @@ def main(ip, count = 100, inter = 0.02):
     for i in range(len(pkt_list)):
         seq_dict[pkt_list[i][ICMP].seq] = pkt_list[i].time
 
-    print seq_dict
-
     ip_dict['received'] = len(pkt_list)
     ip_dict['sent'] = count
+    ip_dict['reach'] = str(format(float(len(pkt_list))/float(count)*100, '.2f')+ ' %')
 
     for i in range(count):
         if i+1 not in seq_dict.keys():
@@ -102,4 +101,4 @@ def main(ip, count = 100, inter = 0.02):
     return ip_dict
 
 if __name__ in '__main__':
-    print  main('8.8.8.8', count = 100, inter = 0.01)
+    print main('8.8.8.8', count = 5000, inter = 0.01)
