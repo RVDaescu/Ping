@@ -1,6 +1,6 @@
-import threading, string, statistics
+import threading, string, statistics, datetime
 from threading import Thread
-from scapy.all import sniff, sendp, IP, ICMP, send
+from scapy.all import sniff, send, IP, ICMP 
 from random import choice
 from time import sleep, time
 
@@ -27,7 +27,7 @@ class snf(Thread):
                     timeout = self.timeout)
         self.output.extend(snf)
         if len(snf) != 0:
-            print 'Sniff on %s made; captured %d packets' %(self.iface, len(snf))
+            print 'Sniff on %s made with filter(%s) ; captured %d packets' %(self.iface, self.filter, len(snf))
         else:
             print 'No packets captured with selected filter'
 
@@ -55,32 +55,38 @@ class snd(Thread):
 
         send(pkt_send_list, iface = self.iface, inter = self.inter)
 
-def main(ip, count = 100, inter = 0.02):
+def main(ip, count = 100, inter = 0.01):
     """
     Descr: for ip (string) sniff packets according to filter
-           - return packet list
+           - return ip_dict (contains various informations)
     """
     ip_dict = {}        #it will contain various informations - will be the return variable
     pkt_list = []       #is the list with the ICMP response packets
     pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
     rsp_time = {}       #the dict with the response times for every ICMP echo (ms)
-    
+ 
+    ip_dict['time'] = format(time(), '.2f')
+   
     print 'Starting sniff for %s' %ip
     sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp' %ip, 
-                    iface= 'wlo1', timeout = count*inter*2)
+                    iface= 'wlo1', timeout = count*inter*2+1)
     sniff_get.start()
     sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp' %ip,
-                     iface = 'wlo1', timeout = count*inter*2)
+                     iface = 'wlo1', timeout = count*inter*2+1)
     sniff_get1.start()
+
+
     print 'Sending ICMP requests to %s' %ip
     send_pk = snd(host = ip, size = 32, iface = 'wlo1', count = count, inter = inter)
+    sleep(1)
     send_pk.start()
     
+    send_pk.join()
     sniff_get.join()
     sniff_get1.join()
-    send_pk.join()
 
-    seq_dict = {}   #contains the sequnce dict from the response ICMP times based on their sequence numbers
+    seq_dict = {}   #contains the sequence dict from the response ICMP times 
+                        #based on their sequence numbers 
     for i in range(len(pkt_list)):
         seq_dict[pkt_list[i][ICMP].seq] = pkt_list[i].time
 
@@ -93,12 +99,14 @@ def main(ip, count = 100, inter = 0.02):
             rsp_time[i+1] = 0 
         else:
             rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
-        
-    ip_dict['RTR'] = rsp_time
+    
+    ip_dict['rsp_dict'] = rsp_time
+
+    ip_dict['avg_rsp'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
     
     ip_dict['jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
 
     return ip_dict
 
-if __name__ in '__main__':
-    print main('8.8.8.8', count = 5000, inter = 0.01)
+#if __name__ in '__main__':
+#    print main('8.8.8.8', count = 5000, inter = 0.01)
