@@ -8,7 +8,7 @@ from utils import raw
  
 class snf(Thread):
 
-    def __init__(self,output = [], filter = 'icmp', iface = 'wlo1', count = -1, timeout = 10):
+    def __init__(self, output = [], filter = 'icmp', iface = 'wlo1', count = -1, timeout = 10):
         #Constructor
         
         Thread.__init__(self)
@@ -54,56 +54,69 @@ class snd(Thread):
 
         send(pkt_send_list, iface = self.iface, inter = self.inter)
 
-def main(ip, count = 100, inter = 0.01, size = 32):
-    """
-    Descr: for ip (string) sniff packets according to filter
-           - return ip_dict (contains - )
-    """
-    
-    ip_dict = {}        #it will contain various informations - will be the return variable
-    pkt_list = []       #is the list with the ICMP response packets
-    pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
-    rsp_time = {}       #the dict with the response times for every ICMP echo (ms)
+class main(Thread):
+
+    def __init__(self, ip, count = 10, inter = 1, size = 32, out_dict = {}):
+
+        Thread.__init__(self)
+        
+        self.out_dict = out_dict    #{}
+        self.ip = ip                #string *.*.*.*
+        self.count = count          #int
+        self.inter = inter          #float
+        self.size = size            #int
+
+    def run(self):
+        """
+        Descr: for ip (string) sniff packets according to filter
+               - return ip_dict (contains - )
+        """
+        
+        ip_dict = {}        #it will contain various informations - will be the return variable
+        pkt_list = []       #is the list with the ICMP response packets
+        pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
+        rsp_time = {}       #the dict with the response times for every ICMP echo (ms)
+     
+        ip_dict['time'] = format(time(), '.2f')
+       
+        #print 'Starting sniff for %s' %ip 
+        #sniifing sent & recieved packets in order to get time out of them
+        sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp' %self.ip, 
+                        iface= 'wlo1', timeout = self.count*self.inter*2+1)
+        sniff_get.start()
  
-    ip_dict['time'] = format(time(), '.2f')
-   
-#    print 'Starting sniff for %s' %ip
-    sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp' %ip, 
-                    iface= 'wlo1', timeout = count*inter*2+1)
-    sniff_get.start()
-    sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp' %ip,
-                     iface = 'wlo1', timeout = count*inter*2+1)
-    sniff_get1.start()
+        sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp' %self.ip,
+                         iface = 'wlo1', timeout = self.count*self.inter*2+1)
+        sniff_get1.start()
 
+        print 'Sending ICMP requests to %s' %self.ip
+        send_pk = snd(host = self.ip, size = self.size, iface = 'wlo1', count = self.count, inter = self.inter)
+        sleep(1)
+        send_pk.start()
+        
+        send_pk.join()
+        sniff_get.join()
+        sniff_get1.join()
 
-#    print 'Sending ICMP requests to %s' %ip
-    send_pk = snd(host = ip, size = size, iface = 'wlo1', count = count, inter = inter)
-    sleep(1)
-    send_pk.start()
-    
-    send_pk.join()
-    sniff_get.join()
-    sniff_get1.join()
+        seq_dict = {}   #contains the sequence dict from the response ICMP times 
+                            #based on their sequence numbers 
+        for i in range(len(pkt_list)):
+            seq_dict[pkt_list[i][ICMP].seq] = pkt_list[i].time
 
-    seq_dict = {}   #contains the sequence dict from the response ICMP times 
-                        #based on their sequence numbers 
-    for i in range(len(pkt_list)):
-        seq_dict[pkt_list[i][ICMP].seq] = pkt_list[i].time
+        ip_dict['Received'] = len(pkt_list)
+        ip_dict['Sent'] = self.count
+        ip_dict['Reachability'] = float(format(len(pkt_list)/float(self.count)*100, '.2f'))
+        
+        for i in range(self.count):
+            if i+1 not in seq_dict.keys():
+                rsp_time[i+1] = 0 
+            else:
+                rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
+        
+        #ip_dict['rsp_dict']
+        
+        ip_dict['Avg_Rsp_time'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
+        
+        ip_dict['Jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
 
-    ip_dict['received'] = len(pkt_list)
-    ip_dict['sent'] = count
-    ip_dict['reach'] = float(format(len(pkt_list)/float(count)*100, '.2f'))
-    
-    for i in range(count):
-        if i+1 not in seq_dict.keys():
-            rsp_time[i+1] = 0 
-        else:
-            rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
-    
-    #ip_dict['rsp_dict']
-    
-    ip_dict['avg_rsp'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
-    
-    ip_dict['jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
-
-    return ip_dict
+        self.out_dict.update(ip_dict)

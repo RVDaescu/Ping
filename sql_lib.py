@@ -9,8 +9,6 @@ def sql_create(db_name = None):
     
     connection = sqlite3.connect(db_name)
 
-    return True
-
 def sql_add_table(db_name, tb_name, **kwargs):
     """
     Creates a new table & header for each arg in kwargs
@@ -31,14 +29,14 @@ def sql_add_table(db_name, tb_name, **kwargs):
     connection.commit()
     connection.close()
 
-    return True
-
 def sql_add_value(db_name, tb_name, **kwargs):
 
     if tb_name not in get_sql_db_table(db_name):
         tb_fields = py2sql(kwargs)
         sql_add_table(db_name, tb_name, **tb_fields)
-   
+    else:
+        pass
+
     connection = sqlite3.connect(db_name)
     cursor = connection.cursor()
 
@@ -52,7 +50,7 @@ def sql_add_value(db_name, tb_name, **kwargs):
     v = v.replace('', '')[:-2]
 
     sql_command = 'INSERT INTO %s (%s) VALUES (%s);' %(tb_name, k, v)
-
+    
     cursor.execute(sql_command)
     connection.commit()
     connection.close()
