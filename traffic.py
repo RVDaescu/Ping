@@ -69,7 +69,7 @@ class main(Thread):
     def run(self):
         """
         Descr: for ip (string) sniff packets according to filter
-               - return ip_dict (contains - )
+               - return ip_dict (contains -reachability, jitter, pkts sent/received, thread start time)
         """
         
         ip_dict = {}        #it will contain various informations - will be the return variable
@@ -89,7 +89,7 @@ class main(Thread):
                          iface = 'wlo1', timeout = self.count*self.inter*2+1)
         sniff_get1.start()
 
-        print 'Sending ICMP requests to %s' %self.ip
+        #print 'Sending ICMP requests to %s' %self.ip
         send_pk = snd(host = self.ip, size = self.size, iface = 'wlo1', count = self.count, inter = self.inter)
         sleep(1)
         send_pk.start()
@@ -110,9 +110,9 @@ class main(Thread):
         for i in range(self.count):
             if i+1 not in seq_dict.keys():
                 rsp_time[i+1] = 0 
-            else:
+            elif pkt_st_list:
                 rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
-        
+    
         #ip_dict['rsp_dict']
         
         ip_dict['Avg_Rsp_time'] = float(format(statistics.mean(rsp_time.values()), '.2f'))

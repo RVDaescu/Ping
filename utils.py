@@ -1,4 +1,5 @@
 from random import choice
+from time import ctime
 import string
 
 def raw(int):
@@ -25,3 +26,7 @@ def py2sql(dict):
         ls_dict[i] = py2sql_dict[ret_type(j)]
 
     return ls_dict
+
+def float2date(i):
+
+    return ctime(i)
