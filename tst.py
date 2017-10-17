@@ -1,30 +1,8 @@
 #!/usr/bin/env python
 
-from time import sleep
-from traffic import *
-from sql_lib import *
+from main import traf2sql
 
-def traf2sql(host_list, db_name, pkt_count = 3, pkt_inter = 1, size = 32, interval = 10, repeat_nr = 10):
-    """
-    method 
-    """
-
-    for i in range(repeat_nr):
-        for host in host_list:
-    
-            host_dict = {}
-            table = 'table_%s' %host.replace('.', '_')
-            
-            host_data = main(host, count = pkt_count, inter = pkt_inter,out_dict = host_dict)
-
-            host_data.start()
-            host_data.join()
-
-            sql_add_value(db_name = db_name, tb_name = table, **host_dict)
-            
-            sleep(interval)
-
-traf2sql(host_list = ['92.223.1.112'], db_name = 'host.sql', pkt_count = 10, pkt_inter = 0.1, interval =60, repeat_nr = 1000)
+traf2sql(host = '92.223.1.112', db_name = 'host.sql', pkt_count = 2, pkt_inter = 0.1, interval =1, repeat_nr = 10000)
 
 
 """
