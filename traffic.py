@@ -60,7 +60,7 @@ class main(Thread):
     def __init__(self, ip, count = 10, inter = 1, size = 32, port = 'wlo1', out_dict = {}):
 
         Thread.__init__(self)
-        
+
         self.out_dict = out_dict    #{}
         self.ip = ip                #string *.*.*.*
         self.count = count          #int
@@ -79,7 +79,7 @@ class main(Thread):
         pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
         rsp_time = {}       #the dict with the response times for every ICMP echo (ms)
      
-        ip_dict['time'] = format(time(), '.2f')
+        ip_dict['Time'] = float(format(time(), '.2f'))
        
         #print 'Starting sniff for %s' %ip 
         #sniifing sent & recieved packets in order to get time out of them

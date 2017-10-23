@@ -2,7 +2,7 @@
 
 from main import traf2sql
 
-traf2sql(host = '92.223.1.112', db_name = 'host.sql', pkt_count = 2, pkt_inter = 0.1, interval =1, repeat_nr = 10000)
+traf2sql(host ='89.47.247.29', db_name = 'host.sql', pkt_count = 3, pkt_inter = 1, interval =10, repeat_nr = 100)
 
 
 """
