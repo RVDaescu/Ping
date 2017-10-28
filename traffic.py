@@ -33,7 +33,7 @@ class snf(Thread):
 class snd(Thread):
     
     def __init__(self, host = '8.8.8.8', count = 10, iface = 'wlo1', 
-                 inter = 0.5, size = 32, seq = 0, verbose = False):
+                 inter = 0.5, verbose = False):
         #Constructor
 
         Thread.__init__(self)
@@ -42,8 +42,6 @@ class snd(Thread):
         self.count = count
         self.iface = iface
         self.inter = inter
-        self.size = raw(size) 
-        self.seq = seq
         self.verbose = verbose
     
     def run(self):
@@ -51,13 +49,13 @@ class snd(Thread):
         
         pkt_send_list = []
         for i in range(self.count):
-            pkt_send_list.append(IP(dst = self.host)/ICMP(seq = i+1)/self.size)
+            pkt_send_list.append(IP(dst = self.host)/ICMP(seq = i+1)) 
 
         send(pkt_send_list, iface = self.iface, inter = self.inter, verbose = self.verbose)
 
 class main(Thread):
 
-    def __init__(self, ip, count = 10, inter = 1, size = 32, port = 'wlo1', out_dict = {}):
+    def __init__(self, ip, count = 10, inter = 1, port = 'wlo1', out_dict = {}):
 
         Thread.__init__(self)
 
@@ -65,7 +63,6 @@ class main(Thread):
         self.ip = ip                #string *.*.*.*
         self.count = count          #int
         self.inter = inter          #float
-        self.size = size            #int
         self.port = port            #string - outgoing interface for sending/receiving trafic
 
     def run(self):
@@ -84,15 +81,15 @@ class main(Thread):
         #print 'Starting sniff for %s' %ip 
         #sniifing sent & recieved packets in order to get time out of them
         sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp' %self.ip, 
-                        iface= self.port, timeout = self.count*self.inter*2+1)
+                        iface= self.port, count = self.count, timeout = self.count*self.inter*2+1)
         sniff_get.start()
  
         sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp' %self.ip,
-                         iface = self.port, timeout = self.count*self.inter*2+1)
+                         iface = self.port, count = self.count, timeout = self.count*self.inter*2+1)
         sniff_get1.start()
 
         #print 'Sending ICMP requests to %s' %self.ip
-        send_pk = snd(host = self.ip, size = self.size, iface = self.port, count = self.count, inter = self.inter)
+        send_pk = snd(host = self.ip, iface = self.port, count = self.count, inter = self.inter)
         sleep(1)
         send_pk.start()
         
@@ -103,7 +100,7 @@ class main(Thread):
         seq_dict = {}   #contains the sequence dict from the response ICMP times 
                             #based on their sequence numbers 
 
-        if not (pkt_st_list or pkt_list):
+        if not (pkt_st_list or pkt_list) or (len(pkt_list) > len(pkt_st_list)):
             ip_dict['Received'] = 0
             ip_dict['Sent'] = 0
             ip_dict['Reachability'] = 0.0

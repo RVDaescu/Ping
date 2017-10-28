@@ -3,8 +3,11 @@ from time import ctime
 import string
 
 def raw(int):
-    
+        
+    if int:
         return ''.join(choice(string.lowercase) for i in range(int))
+    else:
+        pass
 
 def ret_type(i):
     
