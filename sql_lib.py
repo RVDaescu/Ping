@@ -1,76 +1,83 @@
 import sqlite3
-from utils import py2sql
+from utils import *
 
-def sql_create(db_name = None):
-    """
-    Creates a new SQL DB if it does not exist;
-    In SQL DB, it creates a new table
-    """
+class sql(object):
+
+    def connect(self, db_name):
+        """
+        creates/opens DB
+        """
     
-    connection = sqlite3.connect(db_name)
+        self.con = sqlite3.connect(db_name)
 
-def sql_add_table(db_name, tb_name, **kwargs):
-    """
-    Creates a new table & header for each arg in kwargs
-    """
-
-    cmd = ''
-    for key, val in kwargs.items():
-        cmd = cmd + '%s %s, ' %(key, val)
-    
-    cmd = cmd + ' PRIMARY KEY (time)'
-    
-    connection = sqlite3.connect(db_name)
-    cursor = connection.cursor()
-    
-    sql_command = 'CREATE TABLE %s (%s);' %(tb_name, cmd)
-
-    cursor.execute(sql_command)
-    connection.commit()
-    connection.close()
-
-def sql_add_value(db_name, tb_name, **kwargs):
-
-    if tb_name not in get_sql_db_table(db_name):
-        tb_fields = py2sql(kwargs)
-        sql_add_table(db_name, tb_name, **tb_fields)
-    else:
-        pass
-
-    connection = sqlite3.connect(db_name)
-    cursor = connection.cursor()
-
-    k = ''
-    v = ''
-    for key, val in kwargs.items():
-        k = k + '%s, ' %key
-        v = v + '"%s", ' %val
-
-    k = k.replace('', '')[:-2]
-    v = v.replace('', '')[:-2]
-
-    sql_command = 'INSERT INTO %s (%s) VALUES (%s);' %(tb_name, k, v)
-    
-    cursor.execute(sql_command)
-    connection.commit()
-    connection.close()
-
-def get_sql_db_table(db_name):
-
-    connection = sqlite3.connect(db_name)
-    cursor = connection.cursor()
-
-    cursor.execute("SELECT name FROM sqlite_master WHERE type ='table';")
-     
-    val = cursor.fetchall()
-
-    table_list = []
-
-    if not val:
-        return ''
-    else:
-        for i in range(len(val)):
-            table_list.append(val[i][0].encode('utf-8'))
+    def add_table(self, db_name, tb_name, **kwargs):
+        """adds a table and its header
+        """
         
-        return table_list
+        self.connect(db_name)
+        self.cursor = self.con.cursor()
 
+        tb_fields = py2sql(kwargs)
+
+        cmd = "CREATE TABLE %s (" %tb_name
+
+        for key, val in tb_fields.items():
+            cmd = cmd + "%s %s, " %(key, val)
+
+        cmd = cmd + "PRIMARY KEY(time))"
+
+        try:
+            self.cursor.execute(cmd)
+        except:
+            pass
+        self.con.commit()
+
+    def add_value(self, db_name, tb_name, **kwargs):
+        """Adds entries inside sql db
+        """
+    
+        if tb_name not in get_sql_db_table(db_name):
+            self.add_table(db_name, tb_name, **kwargs)
+        else:
+            self.connect(db_name)
+	    self.cursor = self.con.cursor()
+
+	k = ''
+	v = ''
+	for key, val in kwargs.items():
+	    k = k + '%s, ' %key
+	    v = v + '"%s", ' %val
+
+	k = k.replace('', '')[:-2]
+	v = v.replace('', '')[:-2]
+
+	cmd = 'INSERT INTO %s (%s) VALUES (%s);' %(tb_name, k, v)
+
+        self.cursor.execute(cmd)
+        self.con.commit()
+
+    def get_data(self, db_name, tb_name, field = '*', start = None, end = None):
+        """ if start and end - return values between them
+            if start - return values from start till end of file
+            if end - return values from begining till end
+            if not (start or end) - return all table content
+            if filed == * - returns all fields
+            else - returns selected field
+        """
+
+        self.connect(db_name)
+
+        if start and end:
+            wh = ' WHERE time > start and time < end'
+        elif start and not end:
+            wh = ' WHERE time > start'
+        elif not start and end:
+            wh = ' WHERE time < end'
+        else:
+            wh = ''
+            
+        cmd = 'SELECT %S FROM %s%s ORDER BY time;' %(field, tb_name, wh)
+
+        res = self.cursor.execute(cmd).fetchall()
+
+        return res

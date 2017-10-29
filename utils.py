@@ -1,6 +1,8 @@
 from random import choice
 from time import ctime
+import sqlite3
 import string
+
 
 def raw(int):
         
@@ -33,3 +35,23 @@ def py2sql(dict):
 def float2date(i):
 
     return ctime(i)
+
+def get_sql_db_table(db_name):
+
+    connection = sqlite3.connect(db_name)
+    cursor = connection.cursor()
+
+    cursor.execute("SELECT name FROM sqlite_master WHERE type ='table';")
+     
+    val = cursor.fetchall()
+
+    table_list = []
+
+    if not val:
+        return ''
+    else:
+        for i in range(len(val)):
+            table_list.append(val[i][0].encode('utf-8'))
+        
+        return table_list
+

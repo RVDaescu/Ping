@@ -48,8 +48,9 @@ class snd(Thread):
         #Pkt send run method
         
         pkt_send_list = []
+        load = IP(dst = self.host)
         for i in range(self.count):
-            pkt_send_list.append(IP(dst = self.host)/ICMP(seq = i+1)) 
+            pkt_send_list.append(load/ICMP(seq = i+1)) 
 
         send(pkt_send_list, iface = self.iface, inter = self.inter, verbose = self.verbose)
 
@@ -80,11 +81,11 @@ class main(Thread):
        
         #print 'Starting sniff for %s' %ip 
         #sniifing sent & recieved packets in order to get time out of them
-        sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp' %self.ip, 
+        sniff_get = snf(output = pkt_list, filter = 'ip src %s and icmp[icmptype] == 0' %self.ip, 
                         iface= self.port, count = self.count, timeout = self.count*self.inter*2+1)
         sniff_get.start()
  
-        sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp' %self.ip,
+        sniff_get1 = snf(output = pkt_st_list, filter = 'ip dst %s and icmp[icmptype] == 8' %self.ip,
                          iface = self.port, count = self.count, timeout = self.count*self.inter*2+1)
         sniff_get1.start()
 
@@ -120,7 +121,11 @@ class main(Thread):
                 if i+1 not in seq_dict.keys():
                     rsp_time[i+1] = 0 
                 elif pkt_st_list:
-                    rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
+                    try:
+                        rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
+                    except Exception, e:
+                        print len(pkt_st_list), len(pkt_list), len(seq_dict)
+                        print e
 
             #ip_dict['rsp_dict']
 
