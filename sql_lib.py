@@ -35,7 +35,7 @@ class sql(object):
     def add_value(self, db_name, tb_name, **kwargs):
         """Adds entries inside sql db
         """
-    
+
         if tb_name not in get_sql_db_table(db_name):
             self.add_table(db_name, tb_name, **kwargs)
         else:
@@ -66,6 +66,7 @@ class sql(object):
         """
 
         self.connect(db_name)
+        self.cursor = self.con.cursor()
 
         if start and end:
             wh = ' WHERE time > start and time < end'
@@ -76,7 +77,9 @@ class sql(object):
         else:
             wh = ''
             
-        cmd = 'SELECT %S FROM %s%s ORDER BY time;' %(field, tb_name, wh)
+        cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb_name, wh)
+
+        print cmd
 
         res = self.cursor.execute(cmd).fetchall()
 

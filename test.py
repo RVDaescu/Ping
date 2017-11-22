@@ -2,4 +2,9 @@
 
 from main import host
 
-host(host ='8.8.8.8', db_name = 'host.sql', pkt_count = 3, pkt_inter = 0.1, interval =3, repeat_nr = 100000)
+ips = open('ip.txt', 'r').readlines()
+ip = [i.strip('\n') for i in ips]
+
+for i in ip:
+    a = host(ip = i, db_name = 'host.sql', pkt_count = 5, pkt_inter = 1, inter =30, repeat_nr = 1000)
+    a.start()
