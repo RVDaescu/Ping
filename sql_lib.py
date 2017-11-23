@@ -78,7 +78,6 @@ class sql(object):
             wh = ''
             
         cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb_name, wh)
-
         res = self.cursor.execute(cmd).fetchall()
 
         return res
