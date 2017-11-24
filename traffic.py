@@ -60,15 +60,15 @@ class snd(Thread):
 
 class traffic(Thread):
 
-    def __init__(self, ip, count = 10, inter = 1, port = 'wlo1', out_dict = {}, debug = False):
+    def __init__(self, ip, count = 10, inter = 1, port = None, out_dict = {}, debug = False):
 
         Thread.__init__(self)
 
-        self.out_dict = out_dict    #{}
-        self.ip = ip                #string *.*.*.*
-        self.count = count          #int
-        self.inter = inter          #float
-        self.port = port            #string - outgoing interface for sending/receiving trafic
+        self.out_dict = out_dict                        #{}
+        self.ip = ip                                    #string *.*.*.*
+        self.count = count                              #int
+        self.inter = inter                              #float
+        self.port = ip_to_dev(ip) if None else port     #string - outgoing interface for sending/receiving trafic
         self.debug = debug
 
     def run(self):

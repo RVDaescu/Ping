@@ -1,8 +1,6 @@
 from random import choice
 from time import ctime
-import sqlite3
-import string
-
+import sqlite3, string, pexpect
 
 def raw(int):
         
@@ -54,4 +52,18 @@ def get_sql_db_table(db_name):
             table_list.append(val[i][0].encode('utf-8'))
         
         return table_list
+
+def ip_to_dev(ip):
+    p = pexpect.spawn('ip route get %s' %ip)
+
+    a = [i for i in p]
+
+    for i in a: 
+        i = i.split(' ')
+        if 'dev' in i:
+            return i[i.index('dev')+1]
+        else:
+            print 'Could not find outgoing interface for ip %s' %ip
+            print a[0]
+            return False
 
