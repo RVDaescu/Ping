@@ -23,7 +23,7 @@ class host(Thread):
         self.link_dgr = link_dgr    #min percentage on which to notify the user on
 
     def run(self):
-
+        Thread.run(self)
         down = False
         down_nr = 0
         lnk_dgr = False

@@ -67,3 +67,31 @@ def ip_to_dev(ip):
             print a[0]
             return False
 
+def ip_to_gw(ip):
+    p = pexpect.spawn('ip route get %s' %ip)
+    a = [i for i in p]
+
+    for i in a: 
+        i = i.split(' ')
+        
+        #checking if IP is local or remote
+        if 'via' in i:
+            gw_ip = i[i.index('via')+1]
+            ap = pexpect.spawn('arp -a %s' %gw_ip)
+            for j in ap:
+                j = j.split(' ')
+                if 'at' in j:
+                    arp = j[j.index('at')+1]
+                    return arp
+
+        #IP is local
+        else:
+            ap = pexpect.spawn('arp -a %s' %ip)
+            for k in ap:
+                k = k.split(' ')
+                if 'at' in k:
+                    arp = k[k.index('at')+1]
+                    return arp
+
+    print 'Could not obtain mac for %s' %ip
+    return False
