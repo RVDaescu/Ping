@@ -34,9 +34,9 @@ def float2date(i):
 
     return ctime(i)
 
-def get_sql_db_table(db_name):
+def get_sql_db_table(db):
 
-    connection = sqlite3.connect(db_name)
+    connection = sqlite3.connect(db)
     cursor = connection.cursor()
 
     cursor.execute("SELECT name FROM sqlite_master WHERE type ='table';")

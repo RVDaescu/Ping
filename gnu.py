@@ -1,34 +1,46 @@
 from sql_lib import sql
+from time import ctime,time
 import Gnuplot
 
-def plot_to_file(db_name, tb_name, fields = '*')
+def plot_to_file(db, tb, field = 'Reachability', start = None, end = None):
 
-    db = sql()
-    data = db.get_data(db_name = db_name,tb_name= tb_name, field = fields)
+    dbd = sql()
+    data = dbd.get_data(db = db,tb = tb,start = start, end = end)
+
+    type = {'Reachability': '(%)',
+            'Jitter': 'ms',
+            'Avg_Rsp_time': 'ms'}
 
     host = tb.replace('_','.')[3:]
 
+    header = data[0]
+
     g = Gnuplot.Gnuplot()
-    g.title("Host %s",%host)
+    g.title("Host %s" %host)
 
     g.xlabel("Time")
-    g.ylabel("Reachability (%)")
+    g.ylabel("%s %s" %(field, type[field]))
+   
+    time_list = [i[header['Time']] for i in data[1::]]
+    xtic = int(max(time_list)-min(time_list))/5
 
-    time_list = [i[1] for i in data]
-    reach_list = [i[0] for i in data]
-
-    xtic = int(max(time_list)-min(time_list))/25
-
+    data_list = [i[header[field]] for i in data[1::]]
+    rc = Gnuplot.Data(time_list, data_list, title = field, with_='lines')
+    
     g("set grid")
     g("set xtic %s" %xtic)
-    g("set ytic 10")
-
-
-    d = Gnuplot.Data (time_list, reach_list, title="Reachability", with_="lines")
+    
+    if 'Reachability' == field:
+        g('set ytic 0,10,110')
+    elif field in ['Jitter','Avg_Rsp_time']:
+        mx = max(data_list)*1.1
+        g('set ytic 0,%d,%d' %(mx/10,mx))
 
     g("set terminal svg")
-#    g.plot(d) # write SVG data directly to stdout ...
+    g.plot(rc) # write SVG data directly to stdout ...
 
-    g.hardcopy (filename='/home/radu/Ping/graphs/%s.png', terminal='png') # write last plot to another terminal
+    name = host + '_' + ctime(time())
+
+    g.hardcopy (filename='/home/radu/Ping/graphs/%s.png' %name, terminal='png') # write last plot to another terminal
 
     del g

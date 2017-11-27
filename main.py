@@ -8,13 +8,13 @@ from mail import *
 
 class host(Thread):
 
-    def __init__(self, ip, db_name, pkt_count, pkt_inter, inter, repeat_nr, 
+    def __init__(self, ip, db, pkt_count, pkt_inter, inter, repeat_nr, 
                 debug = False, link_dgr = False):
     
         Thread.__init__(self)
 
         self.host = ip              #IP to interogate
-        self.db_name = db_name      #SQL db to write in; table will take host ip
+        self.db = db      #SQL db to write in; table will take host ip
         self.pkt_count = pkt_count  #number of packets to send on a request
         self.pkt_inter = pkt_inter  #interval between each packeta
         self.inter = inter          #interval between pols
@@ -71,7 +71,7 @@ class host(Thread):
 
             write = sql()
 
-            write.add_value(db_name = self.db_name, tb_name = table, **host_dict)
+            write.add_value(db = self.db, tb = table, **host_dict)
             
             sleep(self.inter - self.pkt_count * self.pkt_inter)
 
