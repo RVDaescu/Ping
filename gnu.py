@@ -1,6 +1,6 @@
 from sql_lib import sql
 from time import ctime,time
-import Gnuplot
+import Gnuplot, os
 
 def plot_to_file(db, tb, field = 'Reachability', start = None, end = None):
 
@@ -41,6 +41,8 @@ def plot_to_file(db, tb, field = 'Reachability', start = None, end = None):
 
     name = host + '_' + ctime(time())
 
-    g.hardcopy (filename='/home/radu/Ping/graphs/%s.png' %name, terminal='png') # write last plot to another terminal
+    cwd = os.getcwd()
+
+    g.hardcopy (filename='%s/graphs/%s.png' %(cwd,name), terminal='png') # write last plot to another terminal
 
     del g
