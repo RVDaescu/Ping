@@ -1,6 +1,7 @@
 from random import choice
-from time import ctime
+from time import strftime
 import sqlite3, string, pexpect
+import re
 
 def raw(int):
         
@@ -95,3 +96,15 @@ def ip_to_gw(ip):
 
     print 'Could not obtain mac for %s' %ip
     return False
+
+def time_con(format = 'D.M-H:m'):
+    """
+    D - day;M - month, H - Hour(24 hour format); m: - minute
+    full dic https://docs.python.org/2/library/time.html
+    """
+    dict = {'D': '%d', 'M':'%b', 'H':'%H','m':'%M'}
+
+    res = re.compile(r'\b(' + '|'.join(dict.keys()) + r')\b')
+    res = res.sub(lambda x: dict[x.group()],format)
+
+    return strftime(res)
