@@ -1,5 +1,5 @@
 from random import choice
-from time import strftime
+from time import strftime, localtime, time
 import sqlite3, string, pexpect
 import re
 
@@ -97,7 +97,7 @@ def ip_to_gw(ip):
     print 'Could not obtain mac for %s' %ip
     return False
 
-def time_con(format = 'D.M-H:m'):
+def time_con(tm = None, format = 'D.M-H:m'):
     """
     D - day;M - month, H - Hour(24 hour format); m: - minute
     full dic https://docs.python.org/2/library/time.html
@@ -107,4 +107,4 @@ def time_con(format = 'D.M-H:m'):
     res = re.compile(r'\b(' + '|'.join(dict.keys()) + r')\b')
     res = res.sub(lambda x: dict[x.group()],format)
 
-    return strftime(res)
+    return strftime(res, localtime(tm))

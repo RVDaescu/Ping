@@ -1,3 +1,4 @@
+from utils import time_con
 from sql_lib import sql
 from time import ctime,time
 import Gnuplot, os
@@ -16,6 +17,7 @@ def plot_to_file(db, tb, field = 'Reachability', start = None, end = None):
     header = data[0]
 
     g = Gnuplot.Gnuplot()
+    g('set terminal png size 1980,1080')
     g.title("Host %s" %host)
 
     g.xlabel("Time")
@@ -28,16 +30,17 @@ def plot_to_file(db, tb, field = 'Reachability', start = None, end = None):
     rc = Gnuplot.Data(time_list, data_list, title = field.replace('_',' '), with_='lines')
 
     g("set grid")
-    g("set xtic (%s, %s, %s, %s)" %(time_list[0], 
-                                    time_list[len(time_list)/3],
-                                    time_list[len(time_list)*2/3],
-                                    time_list[-1]))
-    
+    g.__call__('set xtics ("%s" 1, "%s" 2, "%s" 3, "%s" 4, "%s" 5)' %(time_con(tm = time_list[0]), 
+                                      time_con(tm = time_list[len(time_list)/4]),
+                                      time_con(tm = time_list[len(time_list)/2]),
+                                      time_con(tm = time_list[len(time_list)*3/4]),
+                                      time_con(tm = time_list[-1])))
+   
     if 'Reachability' == field:
-        g('set ytic 0,10,105')
+        g('set ytic 0,10,110')
     elif field in ['Jitter','Avg_Rsp_time']:
         mx = max(data_list)*1.1
-        g('set ytic 0,%d,%d' %(mx/5,mx))
+        g('set ytic 0,%d,%d' %(mx/2,mx))
 
     g("set terminal svg")
     g.plot(rc) # write SVG data directly to stdout ...
