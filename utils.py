@@ -3,18 +3,22 @@ from time import strftime, localtime, time
 import sqlite3, string, pexpect
 import re
 
-def raw(int):
-        
-    if int:
-        return ''.join(choice(string.lowercase) for i in range(int))
-    else:
-        pass
+def raw(n):
+    """Builds a n long/bytes string with n characters
+    """
+
+    return ''.join(choice(string.lowercase) for i in range(n))
 
 def ret_type(i):
+    """Return python based type of value "i"
+    """
     
     return str(type(i)).split("'")[1]
 
 def py2sql(dict):
+    """
+    Based on value type of input dict, return dict with Sqlite type value into a dict
+    """
 
     py2sql_dict = {
             'int': 'INT',
@@ -31,11 +35,10 @@ def py2sql(dict):
 
     return ls_dict
 
-def float2date(i):
-
-    return ctime(i)
-
 def get_sql_db_table(db):
+    """
+    For database "db" return all table list
+    """
 
     connection = sqlite3.connect(db)
     cursor = connection.cursor()
@@ -52,9 +55,13 @@ def get_sql_db_table(db):
         for i in range(len(val)):
             table_list.append(val[i][0].encode('utf-8'))
         
-        return table_list
+    return table_list
 
 def ip_to_dev(ip):
+    """
+    For IP (a.b.c.d) returns outgoinf interface from routing table
+    """
+
     p = pexpect.spawn('ip route get %s' %ip)
 
     a = [i for i in p]
@@ -69,6 +76,10 @@ def ip_to_dev(ip):
             return False
 
 def ip_to_gw(ip):
+    """
+    For IP (a.b.c.d) return mac of default gateway interface
+    """
+
     p = pexpect.spawn('ip route get %s' %ip)
     a = [i for i in p]
 
@@ -99,8 +110,9 @@ def ip_to_gw(ip):
 
 def time_con(tm = None, format = 'D.M-H:m'):
     """
+    Converts time "tm" to given format:
     D - day;M - month, H - Hour(24 hour format); m: - minute
-    full dic https://docs.python.org/2/library/time.html
+    full dict https://docs.python.org/2/library/time.html
     """
     dict = {'D': '%d', 'M':'%b', 'H':'%H','m':'%M'}
 

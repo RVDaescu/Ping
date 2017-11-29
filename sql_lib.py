@@ -2,6 +2,9 @@ import sqlite3
 from utils import *
 
 class sql(object):
+    """
+    Object for sql purposes (details bellow)
+    """
 
     def connect(self, db):
         """
@@ -57,11 +60,11 @@ class sql(object):
 
     def get_data(self, db, tb, field = '*', start = None, end = None):
         """ if start and end - return values between them
-            if start - return values from start till end of file
-            if end - return values from begining till end
+            if start - return values from "start" till "end" of file
+            if end - return values from begining till "end"
             if not (start or end) - return all table content
             if filed == * - returns all fields
-            else - returns selected field
+                else - returns selected field
         """
 
         self.connect(db)

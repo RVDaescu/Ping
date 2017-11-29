@@ -2,6 +2,10 @@ import numpy
 import Gnuplot
 from random import sample
 
+"""
+basic gnuplot example; for development purposes
+"""
+
 g = Gnuplot.Gnuplot()
 g.title("rainfall intensity")
 
