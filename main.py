@@ -14,7 +14,7 @@ class host(Thread):
         Thread.__init__(self)
 
         self.host = ip              #IP to interogate
-        self.db = db      #SQL db to write in; table will take host ip
+        self.db = db                #SQL db to write in; table will take host ip
         self.pkt_count = pkt_count  #number of packets to send on a request
         self.pkt_inter = pkt_inter  #interval between each packeta
         self.inter = inter          #interval between pols

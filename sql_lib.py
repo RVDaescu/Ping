@@ -83,7 +83,6 @@ class sql(object):
             wh = ''
         
         cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
-        print cmd
         data = self.cursor.execute(cmd).fetchall()
         header = [i[0] for i in self.cursor.execute(cmd).description]
         header = dict(zip(header, range(0,(len(header)))))
