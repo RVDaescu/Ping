@@ -1,7 +1,7 @@
+from __future__ import division
 from random import choice
 from time import strftime, localtime, time
-import sqlite3, string, pexpect
-import re
+import sqlite3, string, pexpect, re, statistics, numpy as np
 
 def raw(n):
     """Builds a n long/bytes string with n characters
@@ -108,15 +108,44 @@ def ip_to_gw(ip):
     print 'Could not obtain mac for %s' %ip
     return False
 
-def time_con(tm = None, format = 'D.M-H:m'):
+def time_con(tm = None, format = 'D.mt-H:m:S'):
     """
     Converts time "tm" to given format:
-    D - day;M - month, H - Hour(24 hour format); m: - minute
+    D - day;mt - month, H - Hour(24 hour format); m: - minute
     full dict https://docs.python.org/2/library/time.html
     """
-    dict = {'D': '%d', 'M':'%b', 'H':'%H','m':'%M'}
+    dict = {'D': '%d', 'mt':'%b', 'H':'%H','m':'%M', 'S':'%S'}
 
     res = re.compile(r'\b(' + '|'.join(dict.keys()) + r')\b')
     res = res.sub(lambda x: dict[x.group()],format)
 
     return strftime(res, localtime(tm))
+
+def list_split(list, no = 100, mode = 'average'):
+    """
+    Takes list with X number of elements and returns new list 
+    devided into "no" lists averaged/maxed/mined
+    """
+
+    if len(list)<no:
+        print 'List has fewer elements than split number'
+        return False
+
+    new_list = []
+
+    n = len(list)/no
+
+    for (i,j) in zip(range(0,no),range(1,(no+1))):
+        
+        if mode == 'average':
+            new_list.append(statistics.mean([list[i] for i in range(int(n*i),int(n*j))]))
+        elif mode == 'max':
+            new_list.append(max([list[i] for i in range(int(n*i),int(n*j))]))
+        elif mode == 'min':
+            new_list.append(min([list[i] for i in range(int(n*i),int(n*j))]))
+        elif 'fractile' in mode:
+            fr = mode[-2:]
+            new_list.append(np.percentile([list[i] for i in range(int(n*i),int(n*j))], fr))
+     
+
+    return new_list

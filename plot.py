@@ -6,7 +6,6 @@ from time import sleep
 ip1 = ['10.10.108.1','10.10.108.2','10.10.109.1','10.10.109.2','89.47.247.29','185.60.216.35','172.217.16.99','172.217.16.110','185.133.64.69','216.58.209.163']
 ips = ['10.10.107.2']
 for ip in ips:
-    for f in ['Reachability','Jitter','Avg_Rsp_time']:
+    for mod in ['min','max','average','fractile_90']:
         tb = 'tb_'+ip.replace('.','_')
-        plot_to_file(db = 'host_gns.sqlite',tb = tb, field = f)
-        sleep(1)
+        plot_to_file(db = 'host_gns.sqlite',tb = tb, mode = mod)
