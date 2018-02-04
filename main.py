@@ -40,6 +40,10 @@ class host(Thread):
 
             host_data.start()
             host_data.join()
+            
+            write = sql()
+
+            write.add_value(db = self.db, tb = table, **host_dict)
      
             if self.link_dgr:
                 if host_dict['Reachability'] < self.link_dgr and lnk_dgr is False:
@@ -69,10 +73,6 @@ class host(Thread):
                 down_nr = 0
                 down = False
 
-            write = sql()
-
-            write.add_value(db = self.db, tb = table, **host_dict)
-            
             sleep(self.inter - self.pkt_count * self.pkt_inter)
 
             a += 1

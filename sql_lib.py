@@ -25,9 +25,12 @@ class sql(object):
 
         for key, val in tb_fields.items():
             cmd = cmd + "%s %s, " %(key, val)
-
-        cmd = cmd + "PRIMARY KEY(time))"
-
+        
+        if 'Time' in kwargs.keys():
+            cmd = cmd + "PRIMARY KEY(time))" 
+        elif 'IP' in kwargs.keys():
+            cmd = cmd + "PRIMARY KEY(IP))"
+            
         try:
             self.cursor.execute(cmd)
         except:
@@ -42,23 +45,25 @@ class sql(object):
             self.add_table(db, tb, **kwargs)
         else:
             self.connect(db)
+            
 	    self.cursor = self.con.cursor()
 
-	k = ''
-	v = ''
-	for key, val in kwargs.items():
-	    k = k + '%s, ' %key
-	    v = v + '"%s", ' %val
+    	k = ''
+    	v = ''
+    	
+    	for key, val in kwargs.items():
+	        k = k + '%s, ' %key
+	        v = v + '"%s", ' %val
 
-	k = k.replace('', '')[:-2]
-	v = v.replace('', '')[:-2]
+        k = k.replace('', '')[:-2]
+        v = v.replace('', '')[:-2]
 
-	cmd = 'INSERT INTO %s (%s) VALUES (%s);' %(tb, k, v)
+        cmd = 'INSERT INTO %s (%s) VALUES (%s);' %(tb, k, v)
 
         self.cursor.execute(cmd)
         self.con.commit()
 
-    def get_data(self, db, tb, field = '*', start = None, end = None):
+    def get_data(self, db, tb, field = '*', start = None, end = None, key = 'time'):
         """ if start and end - return values between them
             if start - return values from "start" till "end" of file
             if end - return values from begining till "end"
@@ -82,7 +87,11 @@ class sql(object):
         else:
             wh = ''
         
-        cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
+        if key == 'time':
+            cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
+        elif key == 'ip':
+            cmd = 'SELECT %s FROM %s %s ORDER BY ip;' %(field, tb, wh)
+
         data = self.cursor.execute(cmd).fetchall()
         header = [i[0] for i in self.cursor.execute(cmd).description]
         header = dict(zip(header, range(0,(len(header)))))

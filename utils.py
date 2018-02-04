@@ -25,8 +25,9 @@ def py2sql(dict):
             'str': 'VARCHAR(8000)',
             'float': 'FLOAT(2)',
             'unicode': 'VARCHAR(8000)',
-            'long': 'BIGINT'
-                }
+            'long': 'BIGINT',
+            'bool': 'BIT'
+            }
     
     ls_dict = {}
 
@@ -59,7 +60,7 @@ def get_sql_db_table(db):
 
 def ip_to_dev(ip):
     """
-    For IP (a.b.c.d) returns outgoinf interface from routing table
+    For IP (a.b.c.d) returns outgoing interface from local routing table
     """
 
     p = pexpect.spawn('ip route get %s' %ip)
@@ -77,7 +78,7 @@ def ip_to_dev(ip):
 
 def ip_to_gw(ip):
     """
-    For IP (a.b.c.d) return mac of default gateway interface
+    For IP (a.b.c.d) return mac of outgoing interface
     """
 
     p = pexpect.spawn('ip route get %s' %ip)
@@ -146,6 +147,5 @@ def list_split(list, no = 100, mode = 'average'):
         elif 'fractile' in mode:
             fr = mode[-2:]
             new_list.append(np.percentile([list[i] for i in range(int(n*i),int(n*j))], fr))
-     
 
     return new_list
