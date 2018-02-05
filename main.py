@@ -36,13 +36,11 @@ class host(Thread):
 
         run = sql().get_value(db = self.read_db, tb = self.read_tb, field = 'Monitoring',
                               value = self.host, lookup = 'IP')
-        
-        print '%s-%s' %(self.host, run)
 
         while True:
             
             if run == 'False':
-                print self.inter - self.pkt_count * self.pkt_inter
+                sleep(self.inter - self.pkt_count * self.pkt_inter)
                 pass
             
             elif run == 'True':
