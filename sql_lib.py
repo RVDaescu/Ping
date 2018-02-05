@@ -116,8 +116,6 @@ class sql(object):
        
         cmd = 'SELECT "%s" from %s%s;' %(field, tb, where)
 
-        print cmd
-
         data = self.cursor.execute(cmd).fetchall()
 
         return str(data[0][0])

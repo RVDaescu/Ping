@@ -30,53 +30,67 @@ class host(Thread):
         lnk_dgr = False
 
         a = 0
+        if self.inter <= (self.pkt_count * self.pkt_inter)+2:
+            print 'Interval between polls is smaller than the duration of the poll'
+            return False
 
         run = sql().get_value(db = self.read_db, tb = self.read_tb, field = 'Monitoring',
                               value = self.host, lookup = 'IP')
+        
+        print '%s-%s' %(self.host, run)
 
-        while run == 'True':
-            host_dict = {}
-            table = 'tb_%s' %self.host.replace('.', '_')
-
-            host_data = traffic(ip = self.host, count = self.pkt_count, 
-                                inter = self.pkt_inter, debug = self.debug, 
-                                out_dict = host_dict)
-
-            host_data.start()
-            host_data.join()
+        while True:
             
-            write = sql()
+            if run == 'False':
+                print self.inter - self.pkt_count * self.pkt_inter
+                pass
+            
+            elif run == 'True':
+                host_dict = {}
+                table = 'tb_%s' %self.host.replace('.', '_')
 
-            write.add_value(db = self.db, tb = table, **host_dict)
-     
-            if self.link_dgr:
-                if host_dict['Reachability'] < self.link_dgr and lnk_dgr is False:
-                    send_mail(msg = 'Host %s Minor alarm: Link degradation \n\n Host %s \n Time: %s \n Reachability: %r' \
-                              %(self.host, self.host, ctime(host_dict['Time']), host_dict['Reachability']))
-                    lnk_dgr = True
+                host_data = traffic(ip = self.host, count = self.pkt_count, 
+                                    inter = self.pkt_inter, debug = self.debug, 
+                                    out_dict = host_dict)
+
+                host_data.start()
+                host_data.join()
                 
-                elif host_dict['Reachability'] < minor_alarm and lnk_dgr is True:
-                    pass
+                write = sql()
 
-                elif host_dict['Reachability'] > minor_alarm and lnk_dgr is True:
-                    lnk_dgr = False
+                write.add_value(db = self.db, tb = table, **host_dict)
+         
+                if self.link_dgr:
+                    if host_dict['Reachability'] < self.link_dgr and lnk_dgr is False:
+                        send_mail(msg = 'Host %s Minor alarm: Link degradation \n\n Host %s \n Time: %s \n Reachability: %r' \
+                                  %(self.host, self.host, ctime(host_dict['Time']), host_dict['Reachability']))
+                        lnk_dgr = True
+                    
+                    elif host_dict['Reachability'] < minor_alarm and lnk_dgr is True:
+                        pass
 
-            if host_dict['Reachability'] == 0 and down is False:
-                down_nr +=1
-                if down_nr == 3:
-                    send_mail(msg = 'Host %s Critical alarm: DOWN \n\n Host %s \n Down Time: %s' \
+                    elif host_dict['Reachability'] > minor_alarm and lnk_dgr is True:
+                        lnk_dgr = False
+
+                if host_dict['Reachability'] == 0 and down is False:
+                    down_nr +=1
+                    if down_nr == 3:
+                        send_mail(msg = 'Host %s Critical alarm: DOWN \n\n Host %s \n Down Time: %s' \
+                                  %(self.host, self.host, ctime(host_dict['Time'])))
+                        down = True
+                
+                elif host_dict['Reachability'] != 0 and down is False:
+                    down_nr = 0
+
+                elif host_dict['Reachability'] != 0 and down is True:
+                    send_mail(msg = 'Host %s Critical alarm: CLEARED \n\n Host %s \n UP Time: %s' \
                               %(self.host, self.host, ctime(host_dict['Time'])))
-                    down = True
+                    down_nr = 0
+                    down = False
+
+                sleep(self.inter - self.pkt_count * self.pkt_inter)
+
+                a += 1
             
-            elif host_dict['Reachability'] != 0 and down is False:
-                down_nr = 0
-
-            elif host_dict['Reachability'] != 0 and down is True:
-                send_mail(msg = 'Host %s Critical alarm: CLEARED \n\n Host %s \n UP Time: %s' \
-                          %(self.host, self.host, ctime(host_dict['Time'])))
-                down_nr = 0
-                down = False
-
-            sleep(self.inter - self.pkt_count * self.pkt_inter)
-
-            a += 1
+            run = sql().get_value(db = self.read_db, tb = self.read_tb, field = 'Monitoring',
+                                  value = self.host, lookup = 'IP')
