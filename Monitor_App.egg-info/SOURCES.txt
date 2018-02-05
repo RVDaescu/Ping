@@ -1,0 +1,7 @@
+setup.py
+Monitor_App.egg-info/PKG-INFO
+Monitor_App.egg-info/SOURCES.txt
+Monitor_App.egg-info/dependency_links.txt
+Monitor_App.egg-info/not-zip-safe
+Monitor_App.egg-info/requires.txt
+Monitor_App.egg-info/top_level.txt

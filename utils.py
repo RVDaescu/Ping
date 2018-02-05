@@ -1,7 +1,7 @@
 from __future__ import division
 from random import choice
 from time import strftime, localtime, time
-import sqlite3, string, pexpect, re, statistics, numpy as np
+import sqlite3, string, pexpect, re, statistics
 
 def raw(n):
     """Builds a n long/bytes string with n characters

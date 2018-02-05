@@ -7,5 +7,7 @@ setup(name='Monitor App',
       author='Radu-V D',
       author_email='office@daescu.ro',
       license='Free',
-      packages=['gnu.py','mail.py', 'main.py', 'run.py', 'sql_lib.py', 'traffic.py', 'utils.py'],
+      #packages=['gnu','mail', 'main', 'run', 'sql_lib', 'traffic', 'utils'],
+      install_requires=['smtplib', 'base64', 'sqlite3', 'random', 'time', 'string',
+                          'pexpect', 're', 'statistics', 'os', 'Gnuplot', 'scapy'],
       zip_safe=False)
