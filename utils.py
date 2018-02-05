@@ -138,13 +138,13 @@ def list_split(list, no = 100, mode = 'average'):
 
     for (i,j) in zip(range(0,no),range(1,(no+1))):
         
-        if mode == 'average':
+        if mode.lower() == 'average':
             new_list.append(statistics.mean([list[i] for i in range(int(n*i),int(n*j))]))
-        elif mode == 'max':
+        elif mode.lower() == 'max':
             new_list.append(max([list[i] for i in range(int(n*i),int(n*j))]))
-        elif mode == 'min':
+        elif mode.lower() == 'min':
             new_list.append(min([list[i] for i in range(int(n*i),int(n*j))]))
-        elif 'fractile' in mode:
+        elif 'fractile' in mode.lower():
             fr = mode[-2:]
             new_list.append(np.percentile([list[i] for i in range(int(n*i),int(n*j))], fr))
 

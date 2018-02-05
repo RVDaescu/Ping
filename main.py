@@ -8,17 +8,18 @@ from mail import *
 
 class host(Thread):
 
-    def __init__(self, ip, db, pkt_count, pkt_inter, inter, repeat_nr, 
-                debug = False, link_dgr = False):
+    def __init__(self, ip, db, read_db, read_tb, pkt_count, pkt_inter, 
+                 debug = False, link_dgr = False, inter = 3):
     
         Thread.__init__(self)
 
         self.host = ip              #IP to interogate
         self.db = db                #SQL db to write in; table will take host ip
+        self.read_db = read_db      #sql db where monitoring status for IP is found
+        self.read_tb = read_tb      #sql table where IP is found
         self.pkt_count = pkt_count  #number of packets to send on a request
         self.pkt_inter = pkt_inter  #interval between each packeta
         self.inter = inter          #interval between pols
-        self.repeat_nr = repeat_nr  #how many times to repeat the proccess
         self.debug = debug          #print specific info
         self.link_dgr = link_dgr    #min percentage on which to notify the user on
 
@@ -30,7 +31,10 @@ class host(Thread):
 
         a = 0
 
-        for i in range(self.repeat_nr):
+        run = sql().get_value(db = self.read_db, tb = self.read_tb, field = 'Monitoring',
+                              value = self.host, lookup = 'IP')
+
+        while run == 'True':
             host_dict = {}
             table = 'tb_%s' %self.host.replace('.', '_')
 

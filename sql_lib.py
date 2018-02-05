@@ -99,3 +99,26 @@ class sql(object):
         res = [header]+data
 
         return res
+
+    def get_value(self, db, tb, field = '*', lookup = 'IP', value = None):
+        """
+        gets only one value from db file based on field and field value
+        gets entire column based on field
+        """
+
+        self.connect(db)
+        self.cursor = self.con.cursor()
+
+        if value:
+            where = ' WHERE %s is "%s"' %(lookup, value)
+        else:
+            where = ''
+       
+        cmd = 'SELECT "%s" from %s%s;' %(field, tb, where)
+
+        print cmd
+
+        data = self.cursor.execute(cmd).fetchall()
+
+        return str(data[0][0])
+

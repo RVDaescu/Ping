@@ -5,7 +5,11 @@ from threading import Thread
 from scapy.all import sniff, sendp,Ether, IP, ICMP 
 from time import sleep, time
 from utils import raw, ip_to_dev, ip_to_gw
- 
+
+"""
+objects for sniff and send traffic
+"""
+
 class snf(Thread):
     """
     Thread for sniffing traffic;
@@ -93,7 +97,9 @@ class snd(Thread):
 
 class traffic(Thread):
     """
-    Combined thread with sending and received traffic
+    Combined thread with sending and received traffic; 
+    returns dictionary with reachability, avg rsp time jitter and 
+        epoch time when the first packet was sent
     """
 
     def __init__(self, ip, count = 10, inter = 1, 
@@ -111,7 +117,7 @@ class traffic(Thread):
         self.ip = ip                                    #string *.*.*.*
         self.count = count                              #int
         self.inter = inter                              #float
-        self.iface = iface if iface else ip_to_dev(ip)     #string - outgoing interface for sending/receiving trafic
+        self.iface = iface if iface else ip_to_dev(ip)  #string - outgoing interface for sending/receiving trafic
         self.debug = debug
 
     def run(self):
@@ -161,7 +167,7 @@ class traffic(Thread):
             """
             ip_dict['Reachability'] = 0.0
             ip_dict['Jitter'] = 0.0
-            ip_dict['Avg_Rsp_time'] = 0.0
+            ip_dict['Latency'] = 0.0
         
         else:
             ip_dict['Reachability'] = float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
@@ -180,7 +186,7 @@ class traffic(Thread):
                         print len(pkt_st_list), len(pkt_rv_list), len(seq_dict)
                         print e
 
-            ip_dict['Avg_Rsp_time'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
+            ip_dict['Latency'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
             ip_dict['Jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
 
         self.out_dict.update(ip_dict)
