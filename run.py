@@ -22,7 +22,7 @@ class main():
                 read_db = db, read_tb = tb, 
                 pkt_count = i[hd['pkt_count']], 
                 pkt_inter = i[hd['pkt_inter']], 
-                inter = i[hd['interval']])
+                inter = i[hd['interval']]/20)
         a.start()
 
 if __name__ == '__main__':

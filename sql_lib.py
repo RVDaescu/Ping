@@ -60,6 +60,8 @@ class sql(object):
 
         cmd = 'INSERT INTO %s (%s) VALUES (%s);' %(tb, k, v)
 
+        print cmd
+
         self.cursor.execute(cmd)
         self.con.commit()
 

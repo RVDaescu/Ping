@@ -123,7 +123,7 @@ class traffic(Thread):
     def run(self):
         """
         For ip (a.b.c.d) send traffic and than sniff packets according to filter
-        Calculate and return ip_dict (contains - reachability, jitter, thread start time)
+        Calculate and return ip_dict (contains - reachability, jitter, thread start time, latency, packet loss)
         """
         
         ip_dict = {}        #it will contain various informations - will be the return variable
@@ -168,9 +168,15 @@ class traffic(Thread):
             ip_dict['Reachability'] = 0.0
             ip_dict['Jitter'] = 0.0
             ip_dict['Latency'] = 0.0
-        
+            ip_dict['Pkt_loss'] = 0.0
+
         else:
-            ip_dict['Reachability'] = float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
+            if len(pkt_rv_list) == 0:
+                ip_dict['Reachability'] = 0
+            else:
+                ip_dict['Reachability'] = 100
+            
+            ip_dict['Pkt_loss'] = 100 - float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
             
             for i in range(len(pkt_rv_list)):
                 seq_dict[pkt_rv_list[i][ICMP].seq] = pkt_rv_list[i].time
