@@ -1,11 +1,16 @@
-from utils import time_con, list_split
+from utils import time_con, list_split, time_epoch
 from sql_lib import sql
 from time import ctime,time
 import Gnuplot, os
+import sys
+
+sys.dont_write_bytecode = True
+
 
 def plot_to_file(db, tb, field = 'Latency', start = None, end = None, mode = 'average'):
     """
     method for plotting data from sql file (db,tb) with a certain mode 
+    start/end = shhould be in format dd/mm/yy-HH:MM:SS
     average - divides the list in 100 smaller lists and for each division
               makes its average
     max - divides the list in 100 smaller lists and for each division
@@ -13,15 +18,20 @@ def plot_to_file(db, tb, field = 'Latency', start = None, end = None, mode = 'av
     min - divides the list in 100 smaller lists and for each division
               returns the min value
     fractile(x) - divides the list in 100 smaller lists and for each division
-              returns the x% fractile (default should be 5%)
+              returns the x% fractile (default should be 49%)
     """
 
+    start = time_epoch(tm = start) if start else None
+    end = time_epoch(tm =end) if end else None
+
     #read data from the sql file
-    data = sql().get_data(db = db,tb = tb, field = 'Time,'+field, start = start, end = end)
+    data = sql().get_data(db = db,tb = tb, field = 'Time,'+field, 
+                          start = start, end = end)
 
     type = {'Reachability': '(%)',
             'Jitter': '(ms)',
-            'Latency': '(ms)'}
+            'Latency': '(ms)',
+            'Pkt_loss': '(%)'}
 
     #get the ip of the host and set is as a name
     host = tb.replace('_','.')[3:]
@@ -43,7 +53,7 @@ def plot_to_file(db, tb, field = 'Latency', start = None, end = None, mode = 'av
     data_list = [i[header[field]] for i in data]
     data_list = list_split(list = data_list, mode = mode)
     
-    rc = Gnuplot.Data(time_ls, data_list, title = field.replace('_',' '), with_ = 'histeps')
+    rc = Gnuplot.Data(time_ls, data_list, title = field.replace('_',' '), with_ = 'line')
 
 #    if (len(time_ls) or len(data_list)) <= 5:
 #        print 'Lists are to small'
@@ -72,5 +82,4 @@ def plot_to_file(db, tb, field = 'Latency', start = None, end = None, mode = 'av
     cwd = os.getcwd()
 
     g.hardcopy (filename='%s/graphs/%s.png' %(cwd,name), terminal='png') # write last plot to another terminal
-    print name
     del g

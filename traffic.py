@@ -5,6 +5,9 @@ from threading import Thread
 from scapy.all import sniff, sendp,Ether, IP, ICMP 
 from time import sleep, time
 from utils import raw, ip_to_dev, ip_to_gw
+import sys
+
+sys.dont_write_bytecode = True
 
 """
 objects for sniff and send traffic
@@ -168,15 +171,15 @@ class traffic(Thread):
             ip_dict['Reachability'] = 0.0
             ip_dict['Jitter'] = 0.0
             ip_dict['Latency'] = 0.0
-            ip_dict['Pkt_loss'] = 0.0
+            ip_dict['Pkt_loss'] = 100.0
 
         else:
             if len(pkt_rv_list) == 0:
                 ip_dict['Reachability'] = 0
+                ip_dict['Pkt_loss'] = 100
             else:
                 ip_dict['Reachability'] = 100
-            
-            ip_dict['Pkt_loss'] = 100 - float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
+                ip_dict['Pkt_loss'] = 100 - float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
             
             for i in range(len(pkt_rv_list)):
                 seq_dict[pkt_rv_list[i][ICMP].seq] = pkt_rv_list[i].time

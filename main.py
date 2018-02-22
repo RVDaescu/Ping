@@ -5,6 +5,10 @@ from time import sleep, ctime
 from traffic import *
 from sql_lib import *
 from mail import *
+import sys
+
+sys.dont_write_bytecode = True
+
 
 class host(Thread):
 
@@ -18,16 +22,16 @@ class host(Thread):
         self.read_db = read_db      #sql db where monitoring status for IP is found
         self.read_tb = read_tb      #sql table where IP is found
         self.pkt_count = pkt_count  #number of packets to send on a request
-        self.pkt_inter = pkt_inter  #interval between each packeta
-        self.inter = inter          #interval between pols
+        self.pkt_inter = pkt_inter  #interval between each packet
+        self.inter = inter          #interval between polls
         self.debug = debug          #print specific info
-        self.link_dgr = link_dgr    #min percentage on which to notify the user on
+        self.link_dgr = link_dgr    #min percentage on which to notify the user on the packet loss
 
     def run(self):
         Thread.run(self)
         down = False
         down_nr = 0
-        lnk_dgr = False
+        link_dgr = False
 
         a = 0
         if self.inter <= (self.pkt_count * self.pkt_inter)+2:
@@ -59,16 +63,16 @@ class host(Thread):
                 write.add_value(db = self.db, tb = table, **host_dict)
          
                 if self.link_dgr:
-                    if host_dict['Reachability'] < self.link_dgr and lnk_dgr is False:
+                    if host_dict['Pkt_loss'] > self.link_dgr and link_dgr is False:
                         send_mail(msg = 'Host %s Minor alarm: Link degradation \n\n Host %s \n Time: %s \n Reachability: %r' \
                                   %(self.host, self.host, ctime(host_dict['Time']), host_dict['Reachability']))
-                        lnk_dgr = True
+                        link_dgr = True
                     
-                    elif host_dict['Reachability'] < minor_alarm and lnk_dgr is True:
+                    elif host_dict['Reachability'] < minor_alarm and link_dgr is True:
                         pass
 
-                    elif host_dict['Reachability'] > minor_alarm and lnk_dgr is True:
-                        lnk_dgr = False
+                    elif host_dict['Reachability'] > minor_alarm and link_dgr is True:
+                        link_dgr = False
 
                 if host_dict['Reachability'] == 0 and down is False:
                     down_nr +=1

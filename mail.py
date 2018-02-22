@@ -1,5 +1,9 @@
 import smtplib
 import base64
+import sys
+
+sys.dont_write_bytecode = True
+
 
 def send_mail(to_addr = 'rvdaescu@gmail.com', msg = None):
     """

@@ -1,7 +1,11 @@
 from __future__ import division
 from random import choice
-from time import strftime, localtime, time
+import time
+from time import strftime, strptime, localtime, time, mktime
 import sqlite3, string, pexpect, re, statistics
+import sys
+
+sys.dont_write_bytecode = True
 
 def raw(n):
     """Builds a n long/bytes string with n characters
@@ -122,6 +126,9 @@ def time_con(tm = None, format = 'D.mt-H:m:S'):
 
     return strftime(res, localtime(tm))
 
+def time_epoch(tm, pattern = '%d/%m/%y-%H:%M:%S'):
+    return int(mktime(strptime(tm, pattern)))
+
 def list_split(list, no = 100, mode = 'average'):
     """
     Takes list with X number of elements and returns new list 
@@ -129,8 +136,7 @@ def list_split(list, no = 100, mode = 'average'):
     """
 
     if len(list)<no:
-        print 'List has fewer elements than split number'
-        return False
+        return list
 
     new_list = []
 

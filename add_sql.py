@@ -1,5 +1,9 @@
 from random import choice
 from sql_lib import sql
+import sys
+
+sys.dont_write_bytecode = True
+
 """
 simple method to populate a sql with hosts
 """

@@ -1,5 +1,8 @@
 import sqlite3
 from utils import *
+import sys
+
+sys.dont_write_bytecode = True
 
 class sql(object):
     """
@@ -60,8 +63,6 @@ class sql(object):
 
         cmd = 'INSERT INTO %s (%s) VALUES (%s);' %(tb, k, v)
 
-        print cmd
-
         self.cursor.execute(cmd)
         self.con.commit()
 
@@ -116,9 +117,11 @@ class sql(object):
         else:
             where = ''
        
-        cmd = 'SELECT "%s" from %s%s;' %(field, tb, where)
+        cmd = 'SELECT %s from %s%s;' %(field, tb, where)
 
         data = self.cursor.execute(cmd).fetchall()
 
-        return str(data[0][0])
-
+        if value:
+            return str(data[0][0])
+        else:
+            return [i[0] for i in data]
