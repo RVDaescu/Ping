@@ -6,7 +6,7 @@ import sys
 sys.dont_write_bytecode = True
 
 db = 'res_db.sqlite'
-tb = 'tb_8_8_4_4'
+tb = 'tb_8_8_8_8'
 
 #start = '16/02/18-08:00:00'
 #end = '17/02/18-14:00:00'
