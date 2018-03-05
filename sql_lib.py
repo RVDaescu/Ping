@@ -44,7 +44,7 @@ class sql(object):
         """Adds entries inside sql db
         """
 
-        if tb not in get_sql_db_table(db):
+        if tb not in get_sql_db_table(db = db):
             self.add_table(db, tb, **kwargs)
         else:
             self.connect(db)
@@ -125,3 +125,7 @@ class sql(object):
             return str(data[0][0])
         else:
             return [i[0] for i in data]
+
+def ip_to_name(db, tb, ip):
+
+    return sql().get_value(db = db, tb = tb, field = 'Name', lookup = 'IP', value = ip)

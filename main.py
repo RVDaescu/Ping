@@ -26,6 +26,7 @@ class host(Thread):
         self.inter = inter          #interval between polls
         self.debug = debug          #print specific info
         self.link_dgr = link_dgr    #min percentage on which to notify the user on the packet loss
+        self.name = ip_to_name(db = read_db, tb = read_tb, ip = ip)     #name or NS of IP/host
 
     def run(self):
         Thread.run(self)
@@ -61,11 +62,11 @@ class host(Thread):
                 write = sql()
 
                 write.add_value(db = self.db, tb = table, **host_dict)
-         
+
                 if self.link_dgr:
                     if host_dict['Pkt_loss'] > self.link_dgr and link_dgr is False:
-                        send_mail(msg = 'Host %s Minor alarm: Link degradation \n\n Host %s \n Time: %s \n Reachability: %r' \
-                                  %(self.host, self.host, ctime(host_dict['Time']), host_dict['Reachability']))
+                        send_mail(msg = 'Host %s  Minor alarm: Link degradation \n\n Host %s (%s) \n Time: %s \n Reachability: %r' \
+                                  %(self.name, self.name, self.host, ctime(host_dict['Time']), host_dict['Reachability']))
                         link_dgr = True
                     
                     elif host_dict['Reachability'] < minor_alarm and link_dgr is True:
@@ -77,16 +78,16 @@ class host(Thread):
                 if host_dict['Reachability'] == 0 and down is False:
                     down_nr +=1
                     if down_nr == 3:
-                        send_mail(msg = 'Host %s Critical alarm: DOWN \n\n Host %s \n Down Time: %s' \
-                                  %(self.host, self.host, ctime(host_dict['Time'])))
+                        send_mail(msg = 'Host %s Critical alarm: DOWN \n\n Host %s (%s) \n Down Time: %s' \
+                                  %(self.name, self.name, self.host, ctime(host_dict['Time'])))
                         down = True
                 
                 elif host_dict['Reachability'] != 0 and down is False:
                     down_nr = 0
 
                 elif host_dict['Reachability'] != 0 and down is True:
-                    send_mail(msg = 'Host %s Critical alarm: CLEARED \n\n Host %s \n UP Time: %s' \
-                              %(self.host, self.host, ctime(host_dict['Time'])))
+                    send_mail(msg = 'Host %s Critical alarm: CLEARED \n\n Host %s (%s) \n UP Time: %s' \
+                              %(self.name, self.name, self.host, ctime(host_dict['Time'])))
                     down_nr = 0
                     down = False
 
