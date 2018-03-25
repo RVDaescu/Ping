@@ -50,7 +50,7 @@ class host(Thread):
             
             elif run == 'True':
                 host_dict = {}
-                table = 'tb_%s' %self.name
+                table = 'tb_%s' %self.name.split('.')[-2]
 
                 host_data = traffic(ip = self.host, count = self.pkt_count, 
                                     inter = self.pkt_inter, debug = self.debug, 
