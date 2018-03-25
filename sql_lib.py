@@ -46,10 +46,9 @@ class sql(object):
 
         if tb not in get_sql_db_table(db = db):
             self.add_table(db, tb, **kwargs)
-        else:
-            self.connect(db)
-            
-	    self.cursor = self.con.cursor()
+        
+        self.connect(db)
+        self.cursor = self.con.cursor()
 
     	k = ''
     	v = ''

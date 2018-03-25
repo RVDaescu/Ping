@@ -44,19 +44,15 @@ def plot_to_file(db, tb, field = 'Latency', start = None, end = None, mode = 'av
     #give graphic a title name
     g.title("Host %s" %host)
 
-    g('set datafile missing "?"')
-
     g.xlabel("Time")
     g.ylabel("%s %s" %(field.replace('_',' '), type[field]))
    
     time_ls = [i[header['Time']] for i in data]
     time_ls = list_split(list = time_ls, mode = 'average')
 
-    
-
     data_list = [i[header[field]] for i in data]
     data_list = list_split(list = data_list, mode = mode)
-    
+
     rc = Gnuplot.Data(time_ls, data_list, title = field.replace('_',' '), with_ = 'line')
 
 #    if (len(time_ls) or len(data_list)) <= 5:

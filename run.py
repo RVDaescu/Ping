@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from _config import database, table
 from main import host
 from sql_lib import sql
 import sys
@@ -11,8 +12,8 @@ sys.dont_write_bytecode = True
 
 class main():
     
-    db = 'hosts.sqlite'
-    tb = 'group_01'
+    db = database       
+    tb = table      
 
     list = sql().get_data(db = db, tb = tb, key = 'ip')
 

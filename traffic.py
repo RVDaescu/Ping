@@ -18,7 +18,6 @@ class snf(Thread):
     Thread for sniffing traffic;
     """
 
-
     def __init__(self, output = [], filter = 'icmp', iface = None, 
                  count = -1, timeout = 10, debug = False):
         """
@@ -57,6 +56,12 @@ class snf(Thread):
             else:
                 print 'No packets captured with selected filter on interface' \
                         %self.iface
+        self.stop()
+
+    def stop(self):
+
+        self._Thread__stop()
+        return True
 
 class snd(Thread):
     """
@@ -97,6 +102,13 @@ class snd(Thread):
         
         sendp(pkt_send_list, iface = self.iface, 
              inter = self.inter, verbose = self.verbose)
+
+        self.stop()
+
+    def stop(self):
+
+        self._Thread__stop()
+        return True
 
 class traffic(Thread):
     """
@@ -165,7 +177,7 @@ class traffic(Thread):
         seq_dict = {}   #contains the sequence dict from the response ICMP times 
                             #based on their sequence numbers 
 
-        if not (pkt_st_list or pkt_rv_list) or (len(pkt_rv_list) > len(pkt_st_list)):
+        if not (pkt_st_list or pkt_rv_list):
             """In case of some error, build out_dict with all value 0
             """
             ip_dict['Reachability'] = 0.0
@@ -199,3 +211,10 @@ class traffic(Thread):
             ip_dict['Jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
 
         self.out_dict.update(ip_dict)
+
+        self.stop()
+
+    def stop(self):
+
+        self._Thread__stop()
+        return True

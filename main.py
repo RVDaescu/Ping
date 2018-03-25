@@ -18,7 +18,7 @@ class host(Thread):
         Thread.__init__(self)
 
         self.host = ip              #IP to interogate
-        self.db = db                #SQL db to write in; table will take host ip
+        self.db = db                #SQL db to write data in; table will take host ip
         self.read_db = read_db      #sql db where monitoring status for IP is found
         self.read_tb = read_tb      #sql table where IP is found
         self.pkt_count = pkt_count  #number of packets to send on a request
@@ -50,7 +50,7 @@ class host(Thread):
             
             elif run == 'True':
                 host_dict = {}
-                table = 'tb_%s' %self.host.replace('.', '_')
+                table = 'tb_%s' %self.name
 
                 host_data = traffic(ip = self.host, count = self.pkt_count, 
                                     inter = self.pkt_inter, debug = self.debug, 
