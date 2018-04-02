@@ -8,3 +8,4 @@ lib_path = cwd + '\lib\\'
 
 database = 'hosts.sqlite'
 table = 'group_01'
+results_db = 'res_db.sqlite'

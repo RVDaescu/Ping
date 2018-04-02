@@ -66,12 +66,13 @@ class sql(object):
         self.con.commit()
 
     def get_data(self, db, tb, field = '*', start = None, end = None, key = 'time'):
-        """ if start and end - return values between them
-            if start - return values from "start" till "end" of file
-            if end - return values from begining till "end"
-            if not (start or end) - return all table content
-            if filed == * - returns all fields
-                else - returns selected field
+        """ 
+        if start and end - return values between them
+        if start - return values from "start" till "end" of file
+        if end - return values from begining till "end"
+        if not (start or end) - return all table content
+        if filed == * - returns all fields
+           else - returns selected field
         """
 
         self.connect(db)
@@ -124,6 +125,21 @@ class sql(object):
             return str(data[0][0])
         else:
             return [i[0] for i in data]
+
+    def get_row(self, db, tb, lookup):
+        """
+        returns entire row for an lookup (usualy IP)
+        """
+
+        self.connect(db)
+        self.cursor = self.con.cursor()
+
+        cmd = "SELECT * from %s WHERE IP = \"%s\"" %(tb, lookup)
+        data = self.cursor.execute(cmd).fetchall()
+    
+        header = [i[0] for i in self.cursor.execute(cmd).description]
+        header = dict(zip(header, range(0,(len(header)))))
+        return [header] + data
 
 def ip_to_name(db, tb, ip):
 

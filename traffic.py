@@ -1,10 +1,11 @@
 #!/usr/bin/env python
 
-import threading, string, statistics, datetime
+import threading, string, statistics, datetime, os
 from threading import Thread
-from scapy.all import sniff, sendp,Ether, IP, ICMP 
+from scapy.all import sniff, sendp,Ether, IP, ICMP, wrpcap
 from time import sleep, time
 from utils import raw, ip_to_dev, ip_to_gw
+
 import sys
 
 sys.dont_write_bytecode = True
@@ -35,7 +36,7 @@ class snf(Thread):
 
         self.output = output
         self.filter = filter
-        self.iface = iface if iface else ip_to_dev(ip)
+        self.iface = iface if iface else ip_to_dev(host)
         self.count = count
         self.timeout = timeout
         self.debug = debug
@@ -117,7 +118,7 @@ class traffic(Thread):
         epoch time when the first packet was sent
     """
 
-    def __init__(self, ip, count = 10, inter = 1, 
+    def __init__(self, host, count = 10, inter = 1, 
                  iface = None, out_dict = {}, debug = False):
         """
         out_dict: returned dict by object; detailed bellow  
@@ -129,10 +130,10 @@ class traffic(Thread):
         Thread.__init__(self)
 
         self.out_dict = out_dict                        #{}
-        self.ip = ip                                    #string *.*.*.*
+        self.host = host                                #string *.*.*.*
         self.count = count                              #int
         self.inter = inter                              #float
-        self.iface = iface if iface else ip_to_dev(ip)  #string - outgoing interface for sending/receiving trafic
+        self.iface = iface if iface else ip_to_dev(host)  #string - outgoing interface for sending/receiving trafic
         self.debug = debug
 
     def run(self):
@@ -142,69 +143,77 @@ class traffic(Thread):
         """
         
         ip_dict = {}        #it will contain various informations - will be the return variable
-        pkt_rv_list = []    #is the list with the ICMP reply packets
-        pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
+        self.pkt_rv_list = []    #is the list with the ICMP reply packets
+        self.pkt_st_list = []    #is the list with the ICMP request packets (needed for the .time)
         rsp_time = {}       #the dict with the response times for every ICMP echo (ms)
      
         ip_dict['Time'] = float(format(time(), '.2f'))
             
         #sniifing sent & recieved packets in order to get time out of them
-        sniff_get_rv = snf(output = pkt_rv_list, 
-                           filter = 'ip src %s and icmp' %self.ip, 
+        sniff_get_rv = snf(output = self.pkt_rv_list, 
+                           filter = 'ip src %s and icmp' %self.host, 
                            iface= self.iface, 
-                           timeout = self.count*self.inter*2+1,
+                           timeout = self.count*self.inter*5,
                            debug = self.debug)
         sniff_get_rv.start()
        
-        sniff_get_st = snf(output = pkt_st_list, 
-                           filter = 'ip dst %s and icmp' %self.ip,
+        sniff_get_st = snf(output = self.pkt_st_list, 
+                           filter = 'ip dst %s and icmp' %self.host,
                            iface = self.iface, 
                            timeout = self.count*self.inter*2+1,
                            debug = self.debug)
         sniff_get_st.start()
 
-        #print 'Sending ICMP requests to %s' %self.ip
-        send_pk = snd(host = self.ip, iface = self.iface, 
+        if self.debug:
+            print 'Sending ICMP requests to %s' %self.host
+        
+        send_pk = snd(host = self.host, iface = self.iface, 
                       count = self.count, inter = self.inter, 
                       verbose = self.debug)
-        sleep(1)    #needed for packet build-up
+        sleep(1)        #needed for packet build-up
         send_pk.start()
         
         send_pk.join()
+        
         sniff_get_rv.join()
         sniff_get_st.join()
 
         seq_dict = {}   #contains the sequence dict from the response ICMP times 
                             #based on their sequence numbers 
 
-        if not (pkt_st_list or pkt_rv_list):
+        if not self.pkt_rv_list:
             """In case of some error, build out_dict with all value 0
             """
             ip_dict['Reachability'] = 0.0
             ip_dict['Jitter'] = 0.0
             ip_dict['Latency'] = 0.0
             ip_dict['Pkt_loss'] = 100.0
+        
+        elif not self.pkt_st_list:
+            print "Error: No packets were sent!"
+            return False
 
         else:
-            if len(pkt_rv_list) == 0:
-                ip_dict['Reachability'] = 0
-                ip_dict['Pkt_loss'] = 100
-            else:
-                ip_dict['Reachability'] = 100
-                ip_dict['Pkt_loss'] = 100 - float(format(len(pkt_rv_list)/float(self.count)*100, '.2f'))
+
+            #considering echo(s) was/were received
+            ip_dict['Reachability'] = 100
+            ip_dict['Pkt_loss'] = 100 - float(format(len(self.pkt_rv_list)/float(self.count)*100, '.2f'))
             
-            for i in range(len(pkt_rv_list)):
-                seq_dict[pkt_rv_list[i][ICMP].seq] = pkt_rv_list[i].time
+            for i in self.pkt_rv_list:
+                seq_dict[int(i[ICMP].seq)] = i.time
             
             for i in range(self.count):
                 if i+1 not in seq_dict.keys():
                     rsp_time[i+1] = 0 
                 
-                elif pkt_st_list:
+                else:
                     try:
-                        rsp_time[i+1] = float(format((seq_dict[i+1] - pkt_st_list[i].time)*1000, '.2f'))
+                        rsp_time[i+1] = float(format((seq_dict[i+1] - self.pkt_st_list[i].time)*1000, '.2f'))
                     except Exception, e:
-                        print len(pkt_st_list), len(pkt_rv_list), len(seq_dict)
+                        cwd = os.getcwd()
+                        wrpcap(cwd + '/logs/%s_%s.pcap' %(self.host, time()), self.pkt_rv_list+self.pkt_st_list) 
+                        print "sent pkt list len: %d \n recevied pkt list len: %d \n seq_dict: %s" \
+                              %(len(self.pkt_st_list), len(self.pkt_rv_list), seq_dict)
                         print e
 
             ip_dict['Latency'] = float(format(statistics.mean(rsp_time.values()), '.2f'))

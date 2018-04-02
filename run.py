@@ -14,15 +14,14 @@ class main():
     
     db = database       
     tb = table      
+    res_db = result_db
 
     list = sql().get_data(db = db, tb = tb, key = 'ip')
 
     hd = list.pop(0)
 
-    res_db = 'res_db.sqlite'
-
     for i in list:
-        a = host(ip = i[hd['IP']], db = res_db,
+        a = host(host = i[hd['IP']], db = res_db,
                 read_db = db, read_tb = tb, 
                 pkt_count = i[hd['pkt_count']], 
                 pkt_inter = i[hd['pkt_inter']], 

@@ -1,6 +1,9 @@
 import smtplib
 import base64
 import sys
+sys.path.append('/root')
+
+from pas import password
 
 sys.dont_write_bytecode = True
 
@@ -12,7 +15,7 @@ def send_mail(to_addr = 'rvdaescu@gmail.com', msg = None):
 
     server = smtplib.SMTP_SSL('mail.vhsmail.vodafone.com', 465)
 
-    server.login('office@daescu.ro', base64.decodestring('U3VnaXB1bGExQA==\n'))
+    server.login('office@daescu.ro', password)
 
     sub_msg =  'Subject: ' + msg
 
