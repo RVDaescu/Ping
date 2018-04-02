@@ -36,7 +36,7 @@ class snf(Thread):
 
         self.output = output
         self.filter = filter
-        self.iface = iface if iface else ip_to_dev(host)
+        self.iface = iface
         self.count = count
         self.timeout = timeout
         self.debug = debug
@@ -55,7 +55,7 @@ class snf(Thread):
                 print 'On interface %s %d packets were captured' \
                         %(self.iface, len(snf))
             else:
-                print 'No packets captured with selected filter on interface' \
+                print 'No packets captured with selected filter on interface %s' \
                         %self.iface
         self.stop()
 
@@ -85,7 +85,7 @@ class snd(Thread):
 
         self.host = host
         self.count = count
-        self.iface = iface if iface else ip_to_dev(ip)
+        self.iface = iface if iface else ip_to_dev(host)
         self.inter = inter
         self.verbose = verbose
     
