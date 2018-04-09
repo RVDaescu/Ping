@@ -170,6 +170,7 @@ class traffic(Thread):
         send_pk = snd(host = self.host, iface = self.iface, 
                       count = self.count, inter = self.inter, 
                       verbose = self.debug)
+        
         sleep(1)        #needed for packet build-up
         send_pk.start()
         
@@ -181,7 +182,7 @@ class traffic(Thread):
         seq_dict = {}   #contains the sequence dict from the response ICMP times 
                             #based on their sequence numbers 
 
-        if not self.pkt_rv_list:
+        if not self.pkt_rv_list or (len(self.pkt_st_list) > len(self.pkt_rv_list)):
             """In case of some error, build out_dict with all value 0
             """
             ip_dict['Reachability'] = 0.0

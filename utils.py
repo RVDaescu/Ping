@@ -133,7 +133,7 @@ def time_epoch(tm, pattern = '%d/%m/%y-%H:%M:%S'):
     
     return int(mktime(strptime(tm, pattern)))
 
-def list_split(list, no = 100, mode = 'average'):
+def list_split(list, no = 50, mode = 'average'):
     """
     Takes list with X number of elements and returns new list 
     devided into "no" lists averaged/maxed/mined
@@ -145,6 +145,9 @@ def list_split(list, no = 100, mode = 'average'):
     new_list = []
 
     n = len(list)/no
+
+    if mode is None:
+        return list
 
     for (i,j) in zip(range(0,no),range(1,(no+1))):
         

@@ -23,7 +23,7 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
     start/end = should be in format dd/mm/yy-HH:MM:SS
     name = name to give to file
     """
-    
+
     reach = ',Reachability' if reach else ''
     pkt_loss = ',Pkt_loss' if pkt_loss else ''
     jitter = ',Jitter' if jitter else ''
@@ -46,7 +46,8 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
     
     #proccess data
     time_list = [i[header['Time']] for i in data]
-    time_list= list_split(list = time_list, mode = 'average')
+    if mode is not None:
+        time_list= list_split(list = time_list, mode = 'average')
     time_list = [dt.fromtimestamp(i) for i in time_list]
 
     if reach:
@@ -55,7 +56,6 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
     if pkt_loss:
         pkt_loss_list = [i[header[pkt_loss.lstrip(',')]] for i in data]
         pkt_loss_list = list_split(list = pkt_loss_list, mode = mode)
-   
     if jitter:
         jitter_list = [i[header[jitter.lstrip(',')]] for i in data]
         jitter_list = list_split(list = jitter_list, mode = mode)
@@ -79,6 +79,7 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
     ax1.set_yticks([i for i in range(0,101,10)])
     ax1.set_xlim([time_list[0], time_list[-1]])
     ax1.set_xlabel('Time')
+    ax1.minorticks_on()
 
     # Make the y-axis label, ticks and tick labels match the line color.
     if reach and pkt_loss:
@@ -113,7 +114,8 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
     if latency:
         legend = legend + l
 
-    ax2.legend(bbox_to_anchor=(0.05, -0.05), handles = legend)
+    ax2.minorticks_on()
+    ax2.legend(bbox_to_anchor=(0.1, -0.1), handles = legend)
     ax2.tick_params(axis = 'y', which = 'minor', bottom = 'off')
     ax2.set_xlim([time_list[0], time_list[-1]])
 
@@ -121,9 +123,7 @@ def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
 
     if not name:
         name = cwd + '/graphs/' + host + '_' + ctime(time()) + '.png'
-    
+ 
     fig.tight_layout()
-    plt.savefig(name, dpi = 400, papertype = 'A4')
+    plt.savefig(name, dpi = 250, papertype = 'A4', bbox_inches='tight')
     plt.show()
-
-
