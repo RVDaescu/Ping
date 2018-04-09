@@ -1,9 +1,10 @@
 from __future__ import division
 from random import choice
-import time
 from time import strftime, strptime, localtime, time, mktime
+import numpy as np
 import sqlite3, string, pexpect, re, statistics
 import sys
+import time
 
 sys.dont_write_bytecode = True
 
@@ -127,6 +128,9 @@ def time_con(tm = None, format = 'D.mt-H:m:S'):
     return strftime(res, localtime(tm))
 
 def time_epoch(tm, pattern = '%d/%m/%y-%H:%M:%S'):
+    """takes a date as string and returns epoch time
+    """
+    
     return int(mktime(strptime(tm, pattern)))
 
 def list_split(list, no = 100, mode = 'average'):

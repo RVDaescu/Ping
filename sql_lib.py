@@ -65,6 +65,8 @@ class sql(object):
         self.cursor.execute(cmd)
         self.con.commit()
 
+        self.close()
+
     def get_data(self, db, tb, field = '*', start = None, end = None, key = 'time'):
         """ 
         if start and end - return values between them
@@ -90,9 +92,9 @@ class sql(object):
         else:
             wh = ''
         
-        if key == 'time':
+        if key.lower() == 'time':
             cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
-        elif key == 'ip':
+        elif key.lower() == 'ip':
             cmd = 'SELECT %s FROM %s %s ORDER BY ip;' %(field, tb, wh)
 
         data = self.cursor.execute(cmd).fetchall()
@@ -100,6 +102,8 @@ class sql(object):
         header = dict(zip(header, range(0,(len(header)))))
         
         res = [header]+data
+        
+        self.close()
 
         return res
 
@@ -126,6 +130,8 @@ class sql(object):
         else:
             return [i[0] for i in data]
 
+        self.close()
+
     def get_row(self, db, tb, lookup):
         """
         returns entire row for an lookup (usualy IP)
@@ -140,6 +146,12 @@ class sql(object):
         header = [i[0] for i in self.cursor.execute(cmd).description]
         header = dict(zip(header, range(0,(len(header)))))
         return [header] + data
+
+        self.close()
+
+    def close(self):
+        
+        self.con.close()
 
 def ip_to_name(db, tb, ip):
 
