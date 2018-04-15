@@ -160,7 +160,7 @@ class traffic(Thread):
         sniff_get_st = snf(output = self.pkt_st_list, 
                            filter = 'ip dst %s and icmp' %self.host,
                            iface = self.iface, 
-                           timeout = self.count*self.inter*2+1,
+                           timeout = self.count*self.inter*3+1,
                            debug = self.debug)
         sniff_get_st.start()
 

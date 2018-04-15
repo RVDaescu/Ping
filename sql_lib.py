@@ -85,13 +85,16 @@ class sql(object):
                 wh = 'WHERE time > %s and time < %s' %(start,end)
             else:
                 print 'Start should be larger than end'
+        
         elif start and not end:
             wh = 'WHERE time > %s' %start
+        
         elif not start and end:
             wh = 'WHERE time < %s' %end
+
         else:
             wh = ''
-        
+
         if key.lower() == 'time':
             cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
         elif key.lower() == 'ip':

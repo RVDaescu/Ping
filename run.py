@@ -16,26 +16,28 @@ class main():
 
     host_threads = []
 
-    counter = 0
+    list = sql().get_data(db = db, tb = tb, key = 'ip')
 
-    while True:
-        
-        list = sql().get_data(db = db, tb = tb, key = 'ip')
+    hd = list.pop(0)
 
-        hd = list.pop(0)
+    started = 0
 
-        for i in list:
-            a = monitor(host = i[hd['IP']], db = res_db,
-                    read_db = db, read_tb = tb)
-            host_threads.append(a)
-            a.start()
+    for i in list:
+        a = monitor(host = i[hd['IP']], db = res_db,
+                read_db = db, read_tb = tb)
+        host_threads.append(a)
+        a.start()
+        sleep(0.1)
+        started+=1
+        if started % 10 == 0:
+            sleep(1)
 
-        counter +=1
+    for host in host_threads:
+        if not host.isAlive()
+            print '%s: %s' %(ctime(time()), host)
+        host_threads.pop(host)
 
-        if counter == 10:
-            for i in host_threads:
-                print i
-        print '%s: %s' %(ctime(time()), counter)
+        sleep(600)
 
 if __name__ == '__main__':
     main()

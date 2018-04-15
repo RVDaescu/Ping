@@ -1,5 +1,8 @@
 #!/usr/bin/env python
 
+import sys
+sys.path.append('/home/radu/Ping')
+
 from sql_lib import *
 from utils import *
 
