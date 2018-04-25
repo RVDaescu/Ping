@@ -23,8 +23,9 @@ class main():
     started = 0
 
     for i in list:
-        a = monitor(host = i[hd['IP']], db = res_db,
-                read_db = db, read_tb = tb)
+        a = monitor(host = i[hd['IP']],
+                    
+                    db = res_db)
         host_threads.append(a)
         a.start()
         sleep(0.1)
