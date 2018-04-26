@@ -5,7 +5,7 @@ sys.path.append('/root/netmonpy/Ping')
 from graphic import create_graphic
 
 db = 'res_db.sqlite'
-tb = 'global_dns'
+tb = 'cpanel_com'
 
-for mod in ['average','max','min','fractile_50']:
-    create_graphic(db = db, tb = tb, jitter = False, reach = False, mode = mod, start = '9/4/18-23:00:00')
+for mod in [None,'average', 'fractile_05']:
+    create_graphic(db = db, tb = tb, jitter = True, reach = True, mode = mod)

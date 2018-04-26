@@ -42,7 +42,7 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
                           start = start, end = end)
 
     #get the name of the host and set is as a name
-    host = '.'.join(tb.split('_')[1:])
+    host = '.'.join(tb.split('_'))
 
     header = data.pop(0)
     
@@ -52,6 +52,9 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     time_list = [i[header['Time']] for i in data]
     if mode is not None:
         time_list= list_split(list = time_list, mode = 'average')
+        time_list = [dt.fromtimestamp(i) for i in time_list]
+    else:
+        time_list= list_split(list = time_list, mode = None)
         time_list = [dt.fromtimestamp(i) for i in time_list]
 
     if reach:
@@ -97,9 +100,9 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     #    and jitter/latency with miliseconds on right side
     
     if reach:
-        r = ax1.plot(time_list, reach_list, 'g', label = 'Reachability')
+        r = ax1.plot(time_list, reach_list, 'g', label = 'Reachability',linewidth=1.0)
     if pkt_loss:
-        p = ax1.plot(time_list, pkt_loss_list, 'r', label = 'Packet Loss')
+        p = ax1.plot(time_list, pkt_loss_list, 'r', label = 'Packet Loss', linewidth=1.0)
 
     ax1.set_yticks([i for i in range(0,101,10)])
     ax1.set_xlim([time_list[0], time_list[-1]])
@@ -116,9 +119,9 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     ax2 = ax1.twinx()
 
     if latency:
-        l = ax2.plot(time_list, latency_list, 'y', label = 'Latency')
+        l = ax2.plot(time_list, latency_list, 'y', label = 'Latency', linewidth=1.0)
     if jitter:
-        j = ax2.plot(time_list, jitter_list, 'm', label = 'Jitter')
+        j = ax2.plot(time_list, jitter_list, 'm', label = 'Jitter', linewidth=1.0)
     
     if jitter and latency:
         ax2.set_ylabel('Jitter/Latency (ms)')
