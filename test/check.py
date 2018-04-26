@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import sys
-sys.path.append('/home/radu/Ping')
+sys.path.append('/root/netmonpy/Ping')
 
 from sql_lib import *
 from utils import *

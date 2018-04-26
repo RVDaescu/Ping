@@ -7,10 +7,7 @@ import sys, os, matplotlib
 
 matplotlib.rcParams.update({'font.size': 9})
 
-sys.dont_write_bytecode = True
-
-#@profile
-def plot(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
+def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
          start = None, end = None, mode = 'average', name = False, dpi = 200):
     """
     method for plotting data from sql file (db,tb) with a certain mode:

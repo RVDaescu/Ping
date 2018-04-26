@@ -3,8 +3,8 @@
 from _config import *
 from main import monitor
 from sql_lib import sql
+from time import time,ctime,sleep
 import sys
-from time import time,ctime
 
 sys.dont_write_bytecode = True
 
@@ -23,22 +23,23 @@ class main():
     started = 0
 
     for i in list:
-        a = monitor(host = i[hd['IP']],
-                    
-                    db = res_db)
-        host_threads.append(a)
-        a.start()
-        sleep(0.1)
-        started+=1
-        if started % 10 == 0:
-            sleep(1)
+        if i[hd['Monitoring']]:
+            a = monitor(host = i[hd['IP']],
+                        pkt_count = i[hd['pkt_count']],
+                        pkt_inter = i[hd['pkt_inter']],
+                        inter = i[hd['interval']],
+                        name = i[hd['Name']],
+                        db = res_db)
+            host_threads.append(a)
+            a.start()
+            sleep(0.1)
+            started+=1
+            if started % 10 == 0:
+                sleep(1)
 
-    for host in host_threads:
-        if not host.isAlive()
-            print '%s: %s' %(ctime(time()), host)
-        host_threads.pop(host)
-
-        sleep(600)
+    sleep(30)
+    for j in host_threads:
+        print j
 
 if __name__ == '__main__':
     main()

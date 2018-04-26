@@ -1,7 +1,7 @@
 import smtplib
 import base64
 import sys
-sys.path.append('/home/radu')
+sys.path.append('/root')
 
 from pas import password
 
