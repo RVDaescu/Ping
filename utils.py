@@ -139,7 +139,7 @@ def list_split(list, no = 50, mode = 'average'):
     devided into "no" lists averaged/maxed/mined
     """
 
-    if len(list)<no:
+    if len(list)<no or len(list)/no < 10:
         return list
 
     new_list = []

@@ -5,7 +5,7 @@ from datetime import datetime as dt
 import matplotlib.pyplot as plt
 import sys, os, matplotlib
 
-matplotlib.rcParams.update({'font.size': 9})
+matplotlib.rcParams.update({'font.size': 7})
 
 def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency = True,
          start = None, end = None, mode = 'average', name = False, dpi = 200):
