@@ -2,6 +2,8 @@ from utils import time_con, list_split, time_epoch
 from sql_lib import sql
 from time import ctime,time
 from datetime import datetime as dt
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys, os, matplotlib
 
