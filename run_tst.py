@@ -11,9 +11,9 @@ sys.dont_write_bytecode = True
 
 class main():
     
-    db = database       
-    tb = table      
-    res_db = result_db
+    db = 'hosts_test.sqlite'  
+    tb = 'group_01'
+    res_db = 'res_test.sqlite'
 
     list = sql().get_data(db = db, tb = tb, key = 'ip')
 
@@ -46,13 +46,13 @@ class main():
         hd = list.pop(0)
         
         for host in list:
-            if host[hd['Monitoring'] == 'True' and host in to_stop:
+            if host[hd['Monitoring']] == 'True' and host in to_stop:
                 to_run.append(to_stop.pop(host))
-            elif host[hd['Monitoring'] == 'False' and host in to_run:
+            elif host[hd['Monitoring']] == 'False' and host in to_run:
                 to_stop.append(to_run.pop(host))
-            elif host[hd['Monitoring'] == 'True' and host not in to_run:
+            elif host[hd['Monitoring']] == 'True' and host not in to_run:
                 to_run.append(host)           
-            elif host[hd['Monitoring'] == 'False' and host not in to_stop:
+            elif host[hd['Monitoring']] == 'False' and host not in to_stop:
                 to_stop.append(host)
        
         for thread in run_threads:
@@ -61,7 +61,7 @@ class main():
                     thread.work = False
                     run_threads.pop(run_threads.index(thread)) 
         
-        run_threads_name = [t.name for i in run_threads]
+        run_threads_name = [t.name for t in run_threads]
 
         for st in to_run:
             if st not in run_threads_name:

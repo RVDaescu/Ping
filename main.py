@@ -1,13 +1,13 @@
 import threading
 from threading import Thread
 
-from time import sleep, ctime
+from time import time, sleep, ctime
 from traffic import *
 from sql_lib import *
 from mail import *
-import sys
+#import sys
 
-sys.dont_write_bytecode = True
+#sys.dont_write_bytecode = True
 
 class monitor(Thread):
 
@@ -25,6 +25,8 @@ class monitor(Thread):
         #print specific info
         self.debug = debug 
         self.link_dgr = link_dgr    #min percentage on which to notify the user on the packet loss; if 'None' it's not ran
+        self.work = True
+
 
     def run(self):
         
@@ -39,8 +41,10 @@ class monitor(Thread):
             print 'Interval between polls is smaller than the duration of the poll'
             return False
 
-        while True:
+        while self.work:
             
+            run_start = time.time()
+
             host_dict = {}
             host_data = traffic(host = self.host, count = self.pkt_count, 
                                 inter = self.pkt_inter, debug = self.debug, 
@@ -82,7 +86,8 @@ class monitor(Thread):
                 down_nr = 0
                 down = False
 
-            sleep(self.inter - self.pkt_count * self.pkt_inter)
+            if run_start + self.inter > time.time():
+                sleep(run_start + self.inter - time.time())
         
         self.stop()
 

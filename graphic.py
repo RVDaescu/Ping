@@ -52,34 +52,34 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
 
     #proccess data
     time_list = [i[header['Time']] for i in data]
-    if mode is not None:
-        time_list= list_split(list = time_list, mode = 'average')
-        time_list = [dt.fromtimestamp(i) for i in time_list]
-    else:
-        time_list= list_split(list = time_list, mode = None)
-        time_list = [dt.fromtimestamp(i) for i in time_list]
+#    if mode is not None:  #### wil continue with most relevant output: min for reachability, max for others and average for time
+    time_list= list_split(list = time_list, mode = 'average')
+    time_list = [dt.fromtimestamp(i) for i in time_list]
+#    else:
+#        time_list= list_split(list = time_list, mode = None)
+#        time_list = [dt.fromtimestamp(i) for i in time_list]
 
     if reach:
         reach_list = [i[header[reach.lstrip(',')]] for i in data]
-        reach_list = list_split(list = reach_list, mode = mode)
+        reach_list = list_split(list = reach_list, mode = mode if mode else 'fractile_05')
         if not reach_list:
             txt = 'No data available'
 
     if pkt_loss:
         pkt_loss_list = [i[header[pkt_loss.lstrip(',')]] for i in data]
-        pkt_loss_list = list_split(list = pkt_loss_list, mode = mode)
+        pkt_loss_list = list_split(list = pkt_loss_list, mode = mode if mode else 'fractile_95')
         if not pkt_loss_list:
             txt = 'No data available'
    
     if jitter:
         jitter_list = [i[header[jitter.lstrip(',')]] for i in data]
-        jitter_list = list_split(list = jitter_list, mode = mode)
+        jitter_list = list_split(list = jitter_list, mode = mode if mode else 'fractile_95')
         if not jitter_list:
             txt = 'No data available'
    
     if latency:
         latency_list = [i[header[latency.lstrip(',')]] for i in data]
-        latency_list = list_split(list = latency_list, mode = mode)
+        latency_list = list_split(list = latency_list, mode = mode if mode else 'fractile_95')
         if not latency_list:
             txt = 'No data available'
 
