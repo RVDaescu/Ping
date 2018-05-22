@@ -74,14 +74,14 @@ class monitor(Thread):
             if host_dict['Reachability'] == 0 and down is False:
                 down_nr += 1
                 if down_nr == 3:
-                    send_mail(subj = 'Host %s Critical alarm: DOWN' %self.name,  
-                              msg = 'Host %s (%s) \n Down Time: %s' \
+                    send_mail(subj = 'Host %s Critical alarm' %self.name,  
+                            msg = 'Alarm type: HOST DOWN \n Host %s (%s) \n Down since: %s' \
                                  %(self.name, self.host, ctime(host_dict['Time'])))
                     down = True
 
             elif host_dict['Reachability'] != 0 and down is True:
-                send_mail(subj = 'Host %s Critical alarm: CLEARED' %self.name,
-                          msg = 'Host %s (%s) \n UP Time: %s' \
+                send_mail(subj = 'Host %s Critical alarm' %self.name,
+                        msg = 'Alarm type: HOST CLEARED \n Host %s (%s) \n UP since: %s' \
                           %(self.name, self.host, ctime(host_dict['Time'])))
                 down_nr = 0
                 down = False

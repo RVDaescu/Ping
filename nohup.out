@@ -1,0 +1,8 @@
+Exception in thread global2.dns:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 801, in __bootstrap_inner
+    self.run()
+  File "/root/netmonpy/Ping/main.py", line 40, in run
+    if self.inter <= (self.pkt_count * self.pkt_inter)+2:
+TypeError: unsupported operand type(s) for *: 'int' and 'NoneType'
+
