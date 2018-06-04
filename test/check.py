@@ -8,16 +8,14 @@ from utils import *
 
 from time import time, ctime
 
-db = 'res_db.sqlite'
+db = 'res_test.db'
 tbs = get_sql_db_table(db = db)
 failed = []
 ts = []
 
-tb = 'tb_imdb'
-
 #print sql().get_data(db = db, tb = tb, field = 'time')[1:]
 
-max_wait_time = 600
+max_wait_time = 400
 
 for tb in tbs:
     t = max(sql().get_data(db = db, tb = tb, field = 'Time')[1:])[0]

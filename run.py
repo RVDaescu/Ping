@@ -53,7 +53,20 @@ class main():
                 to_run.append(host[hd['Name']]) 
             elif host[hd['Monitoring']] == 'False' and host[hd['Name']] not in to_stop:
                 to_stop.append(host[hd['Name']])
-      
+            
+            for th in run_threads:
+                if host[hd['Monitoring']] == 'True' and th.isAlive() is False:
+                    run_threads.pop(run_threads.index(th))
+		    a1 = monitor(host = host[hd['IP']],
+				pkt_count = host[hd['pkt_count']],
+				pkt_inter = host[hd['pkt_inter']],
+				inter = host[hd['interval']],
+				name = host[hd['Name']],
+				db = res_db)
+		    a1.start()
+		    sleep(0.1) 
+		    run_threads.append(a1)
+
         for thread in run_threads:
             for stp in to_stop:
                 if thread.name == stp:
@@ -61,21 +74,20 @@ class main():
                     sleep(1)
                     run_threads.pop(run_threads.index(thread)) 
         
-        run_threads_name = [t.name for t in run_threads]
-        
         for strt in to_run:
-            if strt not in run_threads_name:
+            if strt not in [i.name for i in run_threads]:
                 for host in list_from_db:
                     if host[hd['Name']] == strt:
-                        a = monitor(host = host[hd['IP']],
+                        b = monitor(host = host[hd['IP']],
                                     pkt_count = host[hd['pkt_count']],
                                     pkt_inter = host[hd['pkt_inter']],
                                     inter = host[hd['interval']],
                                     name = host[hd['Name']],
                                     db = res_db)
-                        a.start()
-                        run_threads.append(a)
-	sleep(30)
+                        b.start()
+                        run_threads.append(b)
+
+	sleep(180)
 
 if __name__ == '__main__':
     main()
