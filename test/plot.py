@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 
+import os
+cwd = os.getcwd()
+
 import sys
-sys.path.append('/root/netmonpy/Ping')
+sys.path.append(cwd)
+
 from graphic import create_graphic
 from utils import get_sql_db_table
 
 db = 'res_db.sqlite'
-tb = ['vodafone_ro','gsp_ro']
+#tb = ['vodafone_ro','gsp_ro']
 
 tb = get_sql_db_table(db)
 
