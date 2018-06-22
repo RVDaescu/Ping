@@ -18,6 +18,13 @@ def send_mail(to_addr = 'rvdaescu@gmail.com', subj = None, msg = None):
     server.login('office@daescu.ro', password)
     sub_msg =  'Subject: ' + subj + ' \n\n\n ' + msg + '\r\n'
 
-    server.sendmail('office@daescu.ro', to_addr , sub_msg)
+    sent = False
+    while sent:
+        try:
+            server.sendmail('office@daescu.ro', to_addr , sub_msg)
+            sent = True
+        except Exception,e:
+            print e
+            continue
 
     server.quit()
