@@ -1,15 +1,12 @@
 from random import choice
 from sql_lib import sql
-import sys
-
-sys.dont_write_bytecode = True
 
 """
 simple method to populate a sql with hosts
 """
 dbd = sql()
-db = 'hosts.sqlite'
-tb = 'group_01'                                                                     
+db = 'proxy.sqlite'
+tb = 'Russia_elite'                                                                     
                 
 f = open('ip.txt', 'r')
 ips = [i.replace('\n','') for i in f.readlines()]

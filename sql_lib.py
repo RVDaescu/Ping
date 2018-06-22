@@ -1,8 +1,5 @@
 import sqlite3
 from utils import *
-import sys
-
-sys.dont_write_bytecode = True
 
 class sql(object):
     """

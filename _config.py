@@ -6,6 +6,8 @@ sql_path = cwd + '\sql\\'
 graphs_path = cwd + '\graphs\\'
 lib_path = cwd + '\lib\\'
 
-database = 'hosts.sqlite'
-table = 'group_01'
-result_db = 'res_db.sqlite'
+#compatible for multiple sql databases
+#structure: {db:{table: "tb.db", results: "result.db"}
+dbs = {'hosts.sqlite': [{'table': 'Internet', 'results': 'res_db.sqlite'}, 
+                        {'table': 'Interlan', 'results': 'res_interlan.db'}]
+      }
