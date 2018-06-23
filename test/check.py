@@ -36,4 +36,4 @@ for database in dbs.keys():
         else:
             print "%s are not working for more than %s seconds in %s" %(len(failed), max_wait_time,data['results'])
             for i,j in zip(failed,ts): 
-                print "%s since \t\t %s" %(i,j)
+                print "\t%s since \t\t %s" %(i,j)

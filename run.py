@@ -11,15 +11,15 @@ sys.dont_write_bytecode = True
 
 class main(Thread):
 
-    def __init__(self, dbs):
+    def __init__(self):
         
         Thread.__init__(self)
-        self.dbs = dbs
+        self.sql_dbs = dbs
 
     def run(self):
 
-        for database in self.dbs.keys():
-            for data in self.dbs[database]:
+        for database in self.sql_dbs.keys():
+            for data in self.sql_dbs[database]:
                 print 'working on db %s, table %s' %(database, data['table'])
                 db = database
                 tb = data['table']
@@ -101,4 +101,5 @@ class main(Thread):
                     sleep(180)
 
 if __name__ == '__main__':
+    print 'Starting thread'
     main()
