@@ -104,5 +104,5 @@ for database in dbs.keys():
         db = database
         tb = data['table']
         res_db = data['results']
-        th = main(sql_db = db, sql_tb = tb, res_db = res_db)
+        th = main(sql_db = db, sql_tb = tb, res_sql = res_db)
         th.start()

@@ -11,7 +11,7 @@ lib_path = cwd + '/lib/'
 dbs = {'hosts.sqlite': [{'table': 'Internet', 'results': 'res_db.sqlite'}, 
                         {'table': 'Interlan', 'results': 'res_interlan.sqlite'}],
        'proxy.sqlite': [{'table': 'Germany_elite', 'results': 'res_de.sqlite'}, 
-                        {'table': 'Franch_elite', 'results': 'res_fr.sqlite'},
+                        {'table': 'France_elite', 'results': 'res_fr.sqlite'},
                         {'table': 'Japan_elite', 'results': 'res_jp.sqlite'}, 
                         {'table': 'Russia_elite', 'results': 'res_rs.sqlite'}]
       }
