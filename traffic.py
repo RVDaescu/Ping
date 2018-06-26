@@ -222,6 +222,9 @@ class traffic(Thread):
 
         self.out_dict.update(ip_dict)
 
+        sniff_get_rv.stop()
+        sniff_get_st.stop()
+
         self.stop()
 
     def stop(self):

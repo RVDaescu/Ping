@@ -56,7 +56,6 @@ class monitor(Thread):
             table = self.name.replace('.','_')
 
             sql().add_value(db = self.db, tb = table, **host_dict)
-
             if self.link_dgr:
                 if host_dict['Pkt_loss'] >= self.link_dgr and dgr is False:
                     dgr_nr += 1
@@ -86,9 +85,11 @@ class monitor(Thread):
                 down_nr = 0
                 down = False
 
+            host_data.stop()
+
             if run_start + self.inter > time.time():
                 sleep(run_start + self.inter - time.time())
-        
+
         self.stop()
 
     def stop(self):
