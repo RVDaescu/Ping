@@ -96,7 +96,9 @@ class sql(object):
             cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
         elif key.lower() == 'ip':
             cmd = 'SELECT %s FROM %s %s ORDER BY ip;' %(field, tb, wh)
-
+        elif key.lower() == 'name':
+            cmd = 'SELECT %s FROM %s %s ORDER BY Name;' %(field, tb, wh)
+    
         data = self.cursor.execute(cmd).fetchall()
         header = [i[0] for i in self.cursor.execute(cmd).description]
         header = dict(zip(header, range(0,(len(header)))))
