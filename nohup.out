@@ -46,3 +46,13 @@ Traceback (most recent call last):
     self._sslobj.do_handshake()
 error: [Errno 104] Connection reset by peer
 
+Exception in thread decdc99plops001.bcdtravel.eu:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 801, in __bootstrap_inner
+    self.run()
+  File "/root/netmonpy/Ping/main.py", line 58, in run
+    sql().add_value(db = self.db, tb = table, **host_dict)
+  File "/root/netmonpy/Ping/sql_lib.py", line 62, in add_value
+    self.cursor.execute(cmd)
+OperationalError: near ")": syntax error
+
