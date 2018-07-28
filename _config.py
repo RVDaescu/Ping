@@ -9,7 +9,7 @@ lib_path = cwd + '/lib/'
 #compatible for multiple sql databases
 #structure: {db:{table: "tb.db", results: "result.db"}
 dbs = {'hosts.sqlite': [{'table': 'Internet', 'results': 'res_db.sqlite'}, 
-                        {'table': 'Interlan', 'results': 'res_interlan.sqlite'}],
+                        {'table': 'Interlan', 'results': 'res_interlan.sqlite', 'down_nr': 1}],
        'proxy.sqlite': [{'table': 'Germany_elite', 'results': 'res_de.sqlite'}, 
                         {'table': 'France_elite', 'results': 'res_fr.sqlite'},
                         {'table': 'Japan_elite', 'results': 'res_jp.sqlite'}, 

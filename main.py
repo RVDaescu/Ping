@@ -11,7 +11,7 @@ from mail import *
 
 class monitor(Thread):
 
-    def __init__(self, host, db, pkt_count = 3, pkt_inter = 1, 
+    def __init__(self, host, db, pkt_count = 3, pkt_inter = 1, down_nr = 3,
                  inter = 300, name = None, debug = False, link_dgr = None):
     
         Thread.__init__(self)
@@ -26,7 +26,7 @@ class monitor(Thread):
         self.debug = debug 
         self.link_dgr = link_dgr    #min percentage on which to notify the user on the packet loss; if 'None' it's not ran
         self.work = True
-
+        self.down_nr = down_nr
 
     def run(self):
         
@@ -34,7 +34,7 @@ class monitor(Thread):
         
         down = False
         dgr = False
-        down_nr = 0
+        down_no = 0
         dgr_nr = 0
 
         if self.inter <= (self.pkt_count * self.pkt_inter)+2:
@@ -71,8 +71,8 @@ class monitor(Thread):
                     dgr_nr = 0
 
             if host_dict['Reachability'] == 0 and down is False:
-                down_nr += 1
-                if down_nr == 3:
+                down_no += 1
+                if down_no == self.down_nr:
                     send_mail(subj = 'Host %s Critical alarm' %self.name,  
                             msg = 'Alarm DOWN \n Host %s (%s) \n Down since: %s' \
                                  %(self.name, self.host, ctime(host_dict['Time'])))
@@ -82,7 +82,7 @@ class monitor(Thread):
                 send_mail(subj = 'Host %s Critical alarm' %self.name,
                         msg = 'Alarm CLEARED \n Host %s (%s) \n UP since: %s' \
                           %(self.name, self.host, ctime(host_dict['Time'])))
-                down_nr = 0
+                down_no = 0
                 down = False
 
             host_data.stop()

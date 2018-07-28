@@ -35,6 +35,7 @@ class main(Thread):
                             pkt_inter = i[hd['pkt_inter']],
                             inter = i[hd['interval']],
                             name = i[hd['Name']],
+                            down_nr = i[hd['down_nr']],
                             db = self.res_sql)
                 print 'starting %s' %i[hd['Name']]
                 a.start()
@@ -71,12 +72,15 @@ class main(Thread):
                                     pkt_inter = host[hd['pkt_inter']],
                                     inter = host[hd['interval']],
                                     name = host[hd['Name']],
+                                    down_nr = host[hd['down_nr']],
                                     db =self.res_sql)
                         a1.start()
                         sleep(0.1) 
                         run_threads.append(a1)
 
             for thread in run_threads:
+                if run_threads.count(thread) != 1:
+                    thread.work = False
                 for stp in to_stop:
                     if thread.name == stp:
                         thread.work = False
@@ -92,6 +96,7 @@ class main(Thread):
                                         pkt_inter = host[hd['pkt_inter']],
                                         inter = host[hd['interval']],
                                         name = host[hd['Name']],
+                                        down_nr = host[hd['down_nr']],
                                         db = self.res_sql)
                             b.start()
                             run_threads.append(b)
