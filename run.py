@@ -10,7 +10,7 @@ sys.dont_write_bytecode = True
 
 class main(Thread):
 
-    def __init__(self, sql_db, sql_tb, res_sql):
+    def __init__(self, sql_db, sql_tb, res_sql, down_nr):
         
         Thread.__init__(self)
         self.sql_db = sql_db
@@ -35,7 +35,7 @@ class main(Thread):
                             pkt_inter = i[hd['pkt_inter']],
                             inter = i[hd['interval']],
                             name = i[hd['Name']],
-                            down_nr = i[hd['down_nr']],
+                            down_nr = down_nr,
                             db = self.res_sql)
                 print 'starting %s' %i[hd['Name']]
                 a.start()
@@ -72,7 +72,7 @@ class main(Thread):
                                     pkt_inter = host[hd['pkt_inter']],
                                     inter = host[hd['interval']],
                                     name = host[hd['Name']],
-                                    down_nr = host[hd['down_nr']],
+                                    down_nr = down_nr,
                                     db =self.res_sql)
                         a1.start()
                         sleep(0.1) 
@@ -84,6 +84,7 @@ class main(Thread):
                 for stp in to_stop:
                     if thread.name == stp:
                         thread.work = False
+                        print 'Stopping %s' %thread.name
                         sleep(1)
                         run_threads.pop(run_threads.index(thread)) 
             
@@ -96,18 +97,19 @@ class main(Thread):
                                         pkt_inter = host[hd['pkt_inter']],
                                         inter = host[hd['interval']],
                                         name = host[hd['Name']],
-                                        down_nr = host[hd['down_nr']],
+                                        down_nr = down_nr,
                                         db = self.res_sql)
                             b.start()
+                            print 'Started thread %s' %i[hd['Name']]
                             run_threads.append(b)
 
             sleep(180)
 
 for database in dbs.keys():
     for data in dbs[database]:
-        print 'working on db %s, table %s' %(database, data['table'])
         db = database
         tb = data['table']
         res_db = data['results']
-        th = main(sql_db = db, sql_tb = tb, res_sql = res_db)
+        down_nr = data['down_nr']
+        th = main(sql_db = db, sql_tb = tb, res_sql = res_db, down_nr = down_nr)
         th.start()

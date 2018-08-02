@@ -1,0 +1,8 @@
+Exception in thread Thread-10:
+Traceback (most recent call last):
+  File "/usr/lib/python2.7/threading.py", line 801, in __bootstrap_inner
+    self.run()
+  File "./run.py", line 103, in run
+    print 'Started thread %s' %i[hd['Name']]
+TypeError: 'monitor' object does not support indexing
+
