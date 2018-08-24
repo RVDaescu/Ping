@@ -26,7 +26,7 @@ for database in dbs.keys():
 
         #print sql().get_data(db = db, tb = tb, field = 'time')[1:]
 
-        max_wait_time = 500
+        max_wait_time = 600
 
         for tb in tbs:
             t = max(sql().get_data(db = db, tb = tb, field = 'Time')[1:])[0]
