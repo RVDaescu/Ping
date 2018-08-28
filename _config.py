@@ -12,6 +12,5 @@ dbs = {'hosts.sqlite': [{'table': 'Internet', 'results': 'res_db.sqlite','down_n
                         {'table': 'Interlan', 'results': 'res_interlan.sqlite', 'down_nr': 1}],
        'proxy.sqlite': [{'table': 'Germany_elite', 'results': 'res_de.sqlite', 'down_nr': 3}, 
                         {'table': 'France_elite', 'results': 'res_fr.sqlite', 'down_nr': 3},
-                        {'table': 'Japan_elite', 'results': 'res_jp.sqlite', 'down_nr': 3}, 
-                        {'table': 'Russia_elite', 'results': 'res_rs.sqlite', 'down_nr': 3}]
-      }
+                        {'table': 'Japan_elite', 'results': 'res_jp.sqlite', 'down_nr': 3}]}
+#                        {'table': 'Russia_elite', 'results': 'res_rs.sqlite', 'down_nr': 3}]
