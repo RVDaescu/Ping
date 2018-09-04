@@ -19,7 +19,7 @@ def send_mail(to_addr = 'rvdaescu@gmail.com', subj = None, msg = None):
     sub_msg =  'Subject: ' + subj + ' \n\n\n ' + msg + '\r\n'
 
     sent = False
-    while sent:
+    while not sent:
         try:
             server.sendmail('office@daescu.ro', to_addr , sub_msg)
             sent = True

@@ -48,7 +48,7 @@ for host in hosts:
         dt = sql().get_data(db = host, tb=tbh, field='Name,interval,Monitoring',key='Name')
         for a,b,c in dt:
             if c == 'True':
-                intr['%s' %a.replace('.','_')]=b
+               intr['%s' %a.replace('.','_')]=b
 
 bad={}
 for db in res:
@@ -65,5 +65,5 @@ for s,r in bad.items():
     if len(r) >2:
         print 'There are hosts who collect data multiple times ' \
               'in the past 24 hours: %s' %s
-        print ctime(r.keys()[0])
-        print ctime(r.keys()[-1])
+        print ctime(min(r.keys()))
+        print ctime(max(r.keys()))
