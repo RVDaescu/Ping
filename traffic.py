@@ -217,7 +217,7 @@ class traffic(Thread):
                               %(len(self.pkt_st_list), len(self.pkt_rv_list), seq_dict)
                         print e
 
-            ip_dict['Latency'] = float(format(statistics.mean(rsp_time.values()), '.2f'))/2
+            ip_dict['Latency'] = float(format(statistics.mean(rsp_time.values()), '.2f'))
             ip_dict['Jitter'] = float(format(statistics.stdev(rsp_time.values()), '.2f'))
 
         self.out_dict.update(ip_dict)
