@@ -14,6 +14,10 @@ db = 'res_interlan.sqlite'
 
 tb = get_sql_db_table(db)
 
+#tb = ['google_peer_interlan_ro']
+
 for t in tb:
-    for mod in [None,'average']:
-        create_graphic(db = db, tb = t, jitter = True, reach = True, mode = mod)
+    for mod in [None]:
+        create_graphic(db = db, tb = t, jitter = True, reach = True, 
+                       latency = True, pkt_loss = True, mode = mod, 
+                       start = '8/8/18-00:00:01')
