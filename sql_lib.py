@@ -64,7 +64,7 @@ class sql(object):
 
         self.close()
 
-    def get_data(self, db, tb, field = '*', start = None, end = None, key = 'time'):
+    def get_data(self, db, tb, field = '*', start = None, end = None, key = 'Time'):
         """ 
         if start and end - return values between them
         if start - return values from "start" till "end" of file
@@ -91,7 +91,7 @@ class sql(object):
 
         else:
             wh = ''
-
+        
         if key.lower() == 'time':
             cmd = 'SELECT %s FROM %s %s ORDER BY time;' %(field, tb, wh)
         elif key.lower() == 'ip':

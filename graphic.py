@@ -3,7 +3,7 @@ from sql_lib import sql
 from time import ctime,time
 from datetime import datetime as dt
 import matplotlib
-matplotlib.use('Agg')
+#matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import sys, os, matplotlib
 
@@ -35,10 +35,9 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     latency = ',Latency' if latency else ''
 
     start = time_epoch(tm = start) if start else None
-    end = time_epoch(tm =end) if end else None
+    end = time_epoch(tm = end) if end else None
 
     data_get = 'Time%s%s%s%s' %(reach, pkt_loss, jitter, latency)
-
     #read data from the sql file
     data = sql().get_data(db = db,tb = tb, field = data_get, 
                           start = start, end = end)
@@ -53,7 +52,7 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     #proccess data
     time_list = [i[header['Time']] for i in data]
 #    if mode is not None:  #### wil continue with most relevant output: min for reachability, max for others and average for time
-    time_list= list_split(list = time_list, mode = 'average')
+    time_list= list_split(list = time_list, mode = mode if mode  else 'average')
     time_list = [dt.fromtimestamp(i) for i in time_list]
 #    else:
 #        time_list= list_split(list = time_list, mode = None)
@@ -61,25 +60,25 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
 
     if reach:
         reach_list = [i[header[reach.lstrip(',')]] for i in data]
-        reach_list = list_split(list = reach_list, mode = mode if mode else 'fractile_05')
+        reach_list = list_split(list = reach_list, mode = mode if mode else 'fractile_03')
         if not reach_list:
             txt = 'No data available'
 
     if pkt_loss:
         pkt_loss_list = [i[header[pkt_loss.lstrip(',')]] for i in data]
-        pkt_loss_list = list_split(list = pkt_loss_list, mode = mode if mode else 'fractile_95')
+        pkt_loss_list = list_split(list = pkt_loss_list, mode = mode if mode else 'fractile_97')
         if not pkt_loss_list:
             txt = 'No data available'
    
     if jitter:
         jitter_list = [i[header[jitter.lstrip(',')]] for i in data]
-        jitter_list = list_split(list = jitter_list, mode = mode if mode else 'fractile_95')
+        jitter_list = list_split(list = jitter_list, mode = mode if mode else 'fractile_97')
         if not jitter_list:
             txt = 'No data available'
    
     if latency:
         latency_list = [i[header[latency.lstrip(',')]] for i in data]
-        latency_list = list_split(list = latency_list, mode = mode if mode else 'fractile_95')
+        latency_list = list_split(list = latency_list, mode = mode if mode else 'fractile_97')
         if not latency_list:
             txt = 'No data available'
 
@@ -148,9 +147,12 @@ def create_graphic(db, tb, reach = True, pkt_loss = True, jitter = True, latency
     ax2.tick_params(axis = 'y', which = 'minor', bottom = 'off')
     ax2.set_xlim([time_list[0], time_list[-1]])
 
-#    fig.tight_layout()
-    plt.savefig(name, dpi = dpi, papertype = 'A4', bbox_inches = 'tight')
-    
-#    plt.show()
+    #fig.tight_layout()
+    #plt.savefig(name, dpi = dpi, papertype = 'A4', bbox_inches = 'tight')
+ 
+    fig = plt.gcf()
+    fig.canvas.set_window_title(name)
+
+    plt.show()
 
     plt.close()
